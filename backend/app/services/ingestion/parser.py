@@ -148,3 +148,4 @@ class DocumentParserService:
                 "commit_count": len(commit_logs)
             }
             return f"GitHub: {owner}/{repo}", combined_content, metadata
+

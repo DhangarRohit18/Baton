@@ -65,3 +65,4 @@ def test_exit_interview_and_gap_resolution(client):
     radar_data = radar_resp.json()
     assert "overall_readiness_score" in radar_data
     assert "risk_breakdown" in radar_data
+

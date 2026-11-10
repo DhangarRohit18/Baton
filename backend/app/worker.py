@@ -40,3 +40,4 @@ def deliver_notification_async(recipient_email: str, subject: str, message: str)
     """
     print(f"[Worker] Delivering alert to {recipient_email}: {subject}")
     return {"delivered": True, "recipient": recipient_email}
+

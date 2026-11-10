@@ -89,3 +89,4 @@ def update_user_role(
     db.commit()
     db.refresh(target)
     return target
+

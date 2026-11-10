@@ -79,3 +79,4 @@ async def create_browser_capture(
         "char_count": doc.char_count,
         "content_hash": calculated_hash
     }
+

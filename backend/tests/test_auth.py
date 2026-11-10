@@ -33,3 +33,4 @@ def test_register_and_login(client):
     me_resp = client.get("/api/v1/auth/me", headers=headers)
     assert me_resp.status_code == 200
     assert me_resp.json()["full_name"] == "Chief Engineer"
+

@@ -74,3 +74,4 @@ def test_project_and_claim_flow(client):
     )
     assert review_resp.status_code == 200
     assert review_resp.json()["status"] == "approved"
+

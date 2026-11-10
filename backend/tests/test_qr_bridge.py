@@ -83,3 +83,4 @@ def test_qr_bridge_lifecycle(client):
     })
     assert post_revoke_redeem.status_code == 400
     assert "revoked" in post_revoke_redeem.json()["detail"].lower()
+

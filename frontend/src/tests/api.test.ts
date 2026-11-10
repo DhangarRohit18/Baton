@@ -17,3 +17,4 @@ describe('BATON Client Token and Validation Suite', () => {
     expect(computedScore).toBeGreaterThan(60); // Critical alert threshold
   });
 });
+

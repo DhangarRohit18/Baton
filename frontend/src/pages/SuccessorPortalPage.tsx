@@ -184,3 +184,4 @@ export const SuccessorPortalPage: React.FC = () => {
     </div>
   );
 };
+

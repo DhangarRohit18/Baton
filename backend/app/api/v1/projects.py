@@ -94,3 +94,4 @@ def get_project(project_id: int, current_user: User = Depends(get_current_user),
         "claim_count": db.query(Claim).filter(Claim.project_id == project.id).count(),
         "gap_count": db.query(KnowledgeGap).filter(KnowledgeGap.project_id == project.id).count(),
     }
+

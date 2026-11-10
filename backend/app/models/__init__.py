@@ -301,3 +301,4 @@ class Notification(Base):
     notification_type = Column(String(50), default="info") # info, warning, alert, handover
     is_read = Column(Boolean, default=False)
     created_at = Column(DateTime, default=utcnow)
+

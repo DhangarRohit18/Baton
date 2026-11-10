@@ -127,3 +127,4 @@ def list_contradictions(
             "created_at": c.created_at
         })
     return results
+

@@ -268,3 +268,4 @@ export const QRBridgePage: React.FC = () => {
     </div>
   );
 };
+

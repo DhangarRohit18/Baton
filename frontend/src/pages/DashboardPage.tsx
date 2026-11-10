@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ShieldCheck, AlertTriangle, FileCheck, HelpCircle,
-  FolderGit2, CheckCircle2, ArrowUpRight, ArrowRight,
-  TrendingUp, Users, Activity, Sparkles, RefreshCw
+  FolderGit2, CheckCircle2, ArrowRight,
+  TrendingUp, Activity, RefreshCw
 } from 'lucide-react';
 import {
-  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  BarChart, Bar, Cell
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer
 } from 'recharts';
 import { api } from '../services/api';
 import { RadarOverview } from '../types';
@@ -34,7 +33,6 @@ export const DashboardPage: React.FC = () => {
     loadData();
   }, []);
 
-  // Mock timeline chart based on claims & documents
   const activityData = [
     { day: 'Mon', claims: 12, gaps: 2 },
     { day: 'Tue', claims: 24, gaps: 5 },
@@ -46,21 +44,20 @@ export const DashboardPage: React.FC = () => {
   ];
 
   const readinessScore = radar?.overall_readiness_score ?? 85.0;
-  const riskScore = radar?.overall_risk_score ?? 15.0;
 
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-[#101935] via-[#0E172E] to-[#0A1226] border border-slate-800 p-6 rounded-2xl shadow-xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-teal-50/80 via-cyan-50/60 to-white dark:from-[#101935] dark:via-[#0E172E] dark:to-[#0A1226] border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm transition-colors">
         <div className="space-y-1">
-          <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase tracking-wider">
-            <Activity className="w-4 h-4 text-cyan-400 animate-pulse" />
+          <div className="flex items-center gap-2 text-teal-700 dark:text-cyan-400 text-xs font-bold uppercase tracking-wider">
+            <Activity className="w-4 h-4 text-teal-600 dark:text-cyan-400 animate-pulse" />
             Live Institutional Continuity Engine
           </div>
-          <h2 className="text-xl md:text-2xl font-extrabold text-slate-100">
-            Organizational Memory & Handover Radar
+          <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100">
+            Organizational Memory &amp; Handover Radar
           </h2>
-          <p className="text-xs text-slate-400 max-w-xl">
+          <p className="text-xs text-slate-600 dark:text-slate-400 max-w-xl">
             Real-time monitoring of operational dependencies, bus-factor vulnerabilities, and evidence-grounded transition assets.
           </p>
         </div>
@@ -68,14 +65,14 @@ export const DashboardPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={loadData}
-            className="p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 hover:text-cyan-400 hover:border-slate-700 transition-colors"
+            className="p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-cyan-400 hover:border-slate-300 dark:hover:border-slate-700 transition-colors shadow-xs"
             title="Refresh Metrics"
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
           <Link
             to="/handovers"
-            className="px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 font-bold text-xs rounded-xl hover:from-cyan-400 hover:to-teal-400 transition-all shadow-md shadow-cyan-500/20 flex items-center gap-1.5"
+            className="px-4 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 dark:from-cyan-500 dark:to-teal-500 text-white dark:text-slate-950 font-bold text-xs rounded-xl hover:from-teal-500 hover:to-cyan-500 shadow-md shadow-teal-500/20 flex items-center gap-1.5 transition-all"
           >
             <span>Generate Handover Pack</span>
             <ArrowRight className="w-4 h-4" />
@@ -86,58 +83,58 @@ export const DashboardPage: React.FC = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Continuity Readiness Score */}
-        <div className="bg-[#10182E] border border-slate-800/90 rounded-xl p-5 space-y-2 relative overflow-hidden">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
+        <div className="bg-white dark:bg-[#10182E] border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-2 shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-semibold">
             <span>Continuity Readiness</span>
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <ShieldCheck className="w-4 h-4 text-emerald-500" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-black text-slate-100">{readinessScore}%</span>
-            <span className="text-[11px] font-semibold text-emerald-400">Target &gt; 80%</span>
+            <span className="text-3xl font-black text-slate-900 dark:text-slate-100">{readinessScore}%</span>
+            <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">Target &gt; 80%</span>
           </div>
-          <div className="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden">
+          <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-full h-1.5 overflow-hidden">
             <div
-              className="bg-gradient-to-r from-teal-400 to-emerald-400 h-1.5 rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-teal-500 to-emerald-500 h-1.5 rounded-full transition-all duration-500"
               style={{ width: `${readinessScore}%` }}
             ></div>
           </div>
         </div>
 
         {/* Bus-Factor Risk Alerts */}
-        <div className="bg-[#10182E] border border-slate-800/90 rounded-xl p-5 space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
+        <div className="bg-white dark:bg-[#10182E] border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-2 shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-semibold">
             <span>Bus-Factor Alerts</span>
-            <AlertTriangle className="w-4 h-4 text-amber-400" />
+            <AlertTriangle className="w-4 h-4 text-amber-500" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-black text-slate-100">{radar?.bus_factor_alert_count || 0}</span>
-            <span className="text-[11px] font-semibold text-amber-400">Isolated Owners</span>
+            <span className="text-3xl font-black text-slate-900 dark:text-slate-100">{radar?.bus_factor_alert_count || 0}</span>
+            <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400">Isolated Owners</span>
           </div>
           <p className="text-[11px] text-slate-500 truncate">Single points of operational departure</p>
         </div>
 
         {/* Unresolved Knowledge Gaps */}
-        <div className="bg-[#10182E] border border-slate-800/90 rounded-xl p-5 space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
+        <div className="bg-white dark:bg-[#10182E] border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-2 shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-semibold">
             <span>Unresolved Gaps</span>
-            <HelpCircle className="w-4 h-4 text-cyan-400" />
+            <HelpCircle className="w-4 h-4 text-teal-600 dark:text-cyan-400" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-black text-slate-100">{radar?.unresolved_gaps_count || 0}</span>
-            <span className="text-[11px] font-semibold text-slate-400">Action items</span>
+            <span className="text-3xl font-black text-slate-900 dark:text-slate-100">{radar?.unresolved_gaps_count || 0}</span>
+            <span className="text-[11px] font-semibold text-slate-500">Action items</span>
           </div>
           <p className="text-[11px] text-slate-500 truncate">Targeted for exit interviews</p>
         </div>
 
         {/* Active Handover Packs */}
-        <div className="bg-[#10182E] border border-slate-800/90 rounded-xl p-5 space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
+        <div className="bg-white dark:bg-[#10182E] border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-2 shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-semibold">
             <span>Handover Packs</span>
-            <CheckCircle2 className="w-4 h-4 text-teal-400" />
+            <CheckCircle2 className="w-4 h-4 text-teal-500" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-black text-slate-100">{radar?.active_handovers_count || 0}</span>
-            <span className="text-[11px] font-semibold text-teal-400">Compiled</span>
+            <span className="text-3xl font-black text-slate-900 dark:text-slate-100">{radar?.active_handovers_count || 0}</span>
+            <span className="text-[11px] font-semibold text-teal-600 dark:text-teal-400">Compiled</span>
           </div>
           <p className="text-[11px] text-slate-500 truncate">Secured with QR Knowledge Bridges</p>
         </div>
@@ -146,16 +143,16 @@ export const DashboardPage: React.FC = () => {
       {/* Visual Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Knowledge Ingestion & Claim Activity */}
-        <div className="lg:col-span-2 bg-[#10182E] border border-slate-800 rounded-xl p-5 space-y-4">
+        <div className="lg:col-span-2 bg-white dark:bg-[#10182E] border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-4 shadow-xs transition-colors">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-cyan-400" />
+              <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-teal-600 dark:text-cyan-400" />
                 Continuity Knowledge Extraction Velocity
               </h3>
-              <p className="text-[11px] text-slate-400">Verified claims vs detected gaps over past 7 days</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Verified claims vs detected gaps over past 7 days</p>
             </div>
-            <span className="text-[10px] bg-slate-900 border border-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">
+            <span className="text-[10px] bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded font-mono">
               7D ROLLUP
             </span>
           </div>
@@ -165,20 +162,27 @@ export const DashboardPage: React.FC = () => {
               <AreaChart data={activityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="claimGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#06B6D4" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#06B6D4" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#0D9488" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#0D9488" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="gapGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.3} />
+                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.25} />
                     <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="day" stroke="#64748B" fontSize={11} tickLine={false} />
-                <YAxis stroke="#64748B" fontSize={11} tickLine={false} />
+                <XAxis dataKey="day" stroke="#94A3B8" fontSize={11} tickLine={false} />
+                <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#0B132B', borderColor: '#334155', borderRadius: '8px', fontSize: '11px' }}
+                  contentStyle={{
+                    backgroundColor: '#FFFFFF',
+                    borderColor: '#E2E8F0',
+                    borderRadius: '8px',
+                    fontSize: '11px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                    color: '#0F172A',
+                  }}
                 />
-                <Area type="monotone" dataKey="claims" stroke="#06B6D4" strokeWidth={2} fillOpacity={1} fill="url(#claimGradient)" name="Verified Claims" />
+                <Area type="monotone" dataKey="claims" stroke="#0D9488" strokeWidth={2} fillOpacity={1} fill="url(#claimGradient)" name="Verified Claims" />
                 <Area type="monotone" dataKey="gaps" stroke="#F59E0B" strokeWidth={1.5} fillOpacity={1} fill="url(#gapGradient)" name="Gaps Identified" />
               </AreaChart>
             </ResponsiveContainer>
@@ -186,13 +190,13 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Risk Factors Breakdown */}
-        <div className="bg-[#10182E] border border-slate-800 rounded-xl p-5 space-y-4 flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#10182E] border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-4 flex flex-col justify-between shadow-xs transition-colors">
           <div>
-            <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-amber-400" />
+            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-amber-500" />
               Continuity Risk Indicators
             </h3>
-            <p className="text-[11px] text-slate-400">Weighted risk vectors analyzed by Radar</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">Weighted risk vectors analyzed by Radar</p>
           </div>
 
           <div className="space-y-3.5 my-auto">
@@ -200,22 +204,22 @@ export const DashboardPage: React.FC = () => {
               radar.risk_breakdown.map((r, i) => (
                 <div key={i} className="space-y-1">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-200">{r.category}</span>
-                    <span className={`font-bold ${r.risk_level === 'Critical' ? 'text-rose-400' : r.risk_level === 'High' ? 'text-amber-400' : 'text-emerald-400'}`}>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">{r.category}</span>
+                    <span className={`font-bold ${r.risk_level === 'Critical' ? 'text-rose-600 dark:text-rose-400' : r.risk_level === 'High' ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                       {r.risk_level} ({Math.round(r.score)}%)
                     </span>
                   </div>
-                  <div className="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden">
+                  <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-full h-1.5 overflow-hidden">
                     <div
-                      className={`h-1.5 rounded-full ${r.risk_level === 'Critical' ? 'bg-rose-500' : r.risk_level === 'High' ? 'bg-amber-400' : 'bg-emerald-400'}`}
+                      className={`h-1.5 rounded-full ${r.risk_level === 'Critical' ? 'bg-rose-500' : r.risk_level === 'High' ? 'bg-amber-400' : 'bg-emerald-500'}`}
                       style={{ width: `${Math.min(100, r.score)}%` }}
                     ></div>
                   </div>
-                  <p className="text-[10px] text-slate-400 leading-tight">{r.explanation}</p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">{r.explanation}</p>
                 </div>
               ))
             ) : (
-              <div className="text-center py-6 text-xs text-slate-400">
+              <div className="text-center py-6 text-xs text-slate-500">
                 No active critical risk flags identified across projects.
               </div>
             )}
@@ -223,7 +227,7 @@ export const DashboardPage: React.FC = () => {
 
           <Link
             to="/radar"
-            className="text-xs text-cyan-400 hover:text-cyan-300 font-semibold flex items-center justify-between pt-2 border-t border-slate-800/80"
+            className="text-xs text-teal-600 dark:text-cyan-400 hover:text-teal-700 dark:hover:text-cyan-300 font-semibold flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800"
           >
             <span>Deep Dive in Knowledge Loss Radar</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -232,28 +236,27 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Project Matrix Table */}
-      <div className="bg-[#10182E] border border-slate-800 rounded-xl overflow-hidden shadow-xl">
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
+      <div className="bg-white dark:bg-[#10182E] border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-xs transition-colors">
+        <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-900/40">
           <div>
-            <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-              <FolderGit2 className="w-4 h-4 text-cyan-400" />
+            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <FolderGit2 className="w-4 h-4 text-teal-600 dark:text-cyan-400" />
               Project Domain Continuity Health
             </h3>
-            <p className="text-[11px] text-slate-400">Operational projects, bus-factor risk scores, and claims ledger status</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">Operational projects, bus-factor risk scores, and claims ledger status</p>
           </div>
           <Link
             to="/ingestion"
-            className="text-xs text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1"
+            className="text-xs text-teal-600 dark:text-cyan-400 hover:text-teal-700 dark:hover:text-cyan-300 font-semibold flex items-center gap-1"
           >
-            <span>Upload Artifacts</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
+            <span>Upload Artifacts &rarr;</span>
           </Link>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-slate-800/80 bg-slate-950/40 text-slate-400 font-semibold uppercase text-[10px] tracking-wider">
+              <tr className="border-b border-slate-200 dark:border-slate-800/80 bg-slate-100/50 dark:bg-slate-950/40 text-slate-500 dark:text-slate-400 font-semibold uppercase text-[10px] tracking-wider">
                 <th className="py-3 px-5">Project Domain</th>
                 <th className="py-3 px-4">Status</th>
                 <th className="py-3 px-4">Risk Level</th>
@@ -263,16 +266,16 @@ export const DashboardPage: React.FC = () => {
                 <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
               {radar?.project_risk_matrix && radar.project_risk_matrix.length > 0 ? (
                 radar.project_risk_matrix.map((p) => (
-                  <tr key={p.project_id} className="hover:bg-slate-900/40 transition-colors">
+                  <tr key={p.project_id} className="hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors">
                     <td className="py-3.5 px-5">
-                      <div className="font-bold text-slate-200">{p.project_name}</div>
-                      <div className="text-[10px] text-slate-400 font-mono">ID: #{p.project_id}</div>
+                      <div className="font-bold text-slate-900 dark:text-slate-200">{p.project_name}</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">ID: #{p.project_id}</div>
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className="capitalize text-[10px] font-semibold bg-slate-800 px-2 py-0.5 rounded text-slate-300 border border-slate-700">
+                      <span className="capitalize text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                         {p.status}
                       </span>
                     </td>
@@ -280,19 +283,19 @@ export const DashboardPage: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <div
                           className={`w-2 h-2 rounded-full ${
-                            p.risk_score > 60 ? 'bg-rose-500' : p.risk_score > 30 ? 'bg-amber-400' : 'bg-emerald-400'
+                            p.risk_score > 60 ? 'bg-rose-500' : p.risk_score > 30 ? 'bg-amber-400' : 'bg-emerald-500'
                           }`}
                         />
-                        <span className="font-semibold text-slate-200">{p.risk_score}%</span>
+                        <span className="font-semibold text-slate-800 dark:text-slate-200">{p.risk_score}%</span>
                       </div>
                     </td>
-                    <td className="py-3.5 px-4 font-mono text-slate-300">{p.total_claims}</td>
-                    <td className="py-3.5 px-4 font-mono text-amber-400">{p.unverified_claims_count}</td>
-                    <td className="py-3.5 px-4 font-mono text-rose-400">{p.open_gaps_count}</td>
+                    <td className="py-3.5 px-4 font-mono text-slate-700 dark:text-slate-300">{p.total_claims}</td>
+                    <td className="py-3.5 px-4 font-mono text-amber-600 dark:text-amber-400">{p.unverified_claims_count}</td>
+                    <td className="py-3.5 px-4 font-mono text-rose-600 dark:text-rose-400">{p.open_gaps_count}</td>
                     <td className="py-3.5 px-4 text-right">
                       <Link
                         to={`/claims?project_id=${p.project_id}`}
-                        className="text-xs text-cyan-400 hover:text-cyan-300 font-semibold inline-flex items-center gap-1"
+                        className="text-xs text-teal-600 dark:text-cyan-400 hover:text-teal-700 dark:hover:text-cyan-300 font-semibold inline-flex items-center gap-1"
                       >
                         Claim Ledger &rarr;
                       </Link>

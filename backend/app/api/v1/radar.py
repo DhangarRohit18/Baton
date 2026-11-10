@@ -17,3 +17,4 @@ def get_radar_overview(
     Returns high-level institutional memory continuity and risk analytics.
     """
     return KnowledgeLossRadarService.get_organization_radar(db, current_user.organization_id)
+

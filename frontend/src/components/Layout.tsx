@@ -4,7 +4,7 @@ import { Navbar } from './Navbar';
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="flex min-h-screen bg-[#0B132B] text-slate-100">
+    <div className="flex min-h-screen bg-white dark:bg-[#070D1E] text-slate-900 dark:text-slate-100 transition-colors">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar />

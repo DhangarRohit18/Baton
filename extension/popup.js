@@ -164,3 +164,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnCaptureAll.addEventListener("click", () => executeCapture(false));
   btnCaptureSelection.addEventListener("click", () => executeCapture(true));
 });
+

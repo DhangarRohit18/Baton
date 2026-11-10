@@ -20,3 +20,4 @@
 4. Select the target project.
 5. Click **Capture Full Page** or highlight text and click **Capture Selected Highlight**.
 6. The content is securely transferred to BATON, chunked into evidence, and verified by the Deterministic Grounding Guard.
+

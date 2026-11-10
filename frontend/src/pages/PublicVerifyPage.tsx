@@ -135,3 +135,4 @@ export const PublicVerifyPage: React.FC = () => {
     </div>
   );
 };
+

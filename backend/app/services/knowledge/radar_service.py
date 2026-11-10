@@ -168,3 +168,4 @@ class KnowledgeLossRadarService:
                         )
                         db.add(contra)
         db.commit()
+

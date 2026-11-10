@@ -18,3 +18,4 @@ def get_audit_logs(
         AuditLog.organization_id == current_user.organization_id
     ).order_by(AuditLog.id.desc()).limit(limit).all()
     return logs
+

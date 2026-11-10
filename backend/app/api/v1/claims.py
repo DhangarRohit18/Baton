@@ -186,3 +186,4 @@ def review_claim(
         "created_at": claim.created_at,
         "evidence_links": []
     }
+

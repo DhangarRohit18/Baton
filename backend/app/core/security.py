@@ -85,3 +85,4 @@ def verify_qr_token(signed_token: str) -> Optional[Dict[str, Any]]:
         return payload
     except Exception:
         return None
+

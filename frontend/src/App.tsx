@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ProjectProvider } from './context/ProjectContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { Layout } from './components/Layout';
 
 import { LandingPage } from './pages/LandingPage';
@@ -36,9 +37,10 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 export const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <ProjectProvider>
-        <BrowserRouter>
+    <ThemeProvider>
+      <AuthProvider>
+        <ProjectProvider>
+          <BrowserRouter>
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<LandingPage />} />
@@ -65,6 +67,7 @@ export const App: React.FC = () => {
         </BrowserRouter>
       </ProjectProvider>
     </AuthProvider>
+  </ThemeProvider>
   );
 };
 

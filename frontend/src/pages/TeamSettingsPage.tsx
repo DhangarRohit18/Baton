@@ -227,3 +227,4 @@ export const TeamSettingsPage: React.FC = () => {
     </div>
   );
 };
+

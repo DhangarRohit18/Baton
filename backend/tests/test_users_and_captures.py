@@ -63,3 +63,4 @@ def test_team_invite_and_browser_capture(client):
     assert verify_json["valid"] is True
     assert verify_json["integrity_status"] == "VERIFIED_AUTHENTIC"
     assert "verification_id" in verify_json
+

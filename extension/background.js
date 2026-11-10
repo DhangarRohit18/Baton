@@ -6,3 +6,4 @@ chrome.runtime.onInstalled.addListener(() => {
     captureHistory: []
   });
 });
+

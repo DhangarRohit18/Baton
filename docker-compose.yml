@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: baton_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-baton_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-baton_secure_pass_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-baton_vault}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U baton_user -d baton_vault"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: baton_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: baton_backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      - DATABASE_URL=postgresql://baton_user:baton_secure_pass_2026@db:5432/baton_vault
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-baton-enterprise-crypto-secret-key-32bytes-secure!}
+      - AI_PROVIDER=${AI_PROVIDER:-hybrid}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    ports:
+      - "8000:8000"
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: baton_celery_worker
+    restart: always
+    depends_on:
+      - backend
+      - redis
+    command: ["celery", "-A", "app.worker.celery_app", "worker", "--loglevel=info"]
+    environment:
+      - DATABASE_URL=postgresql://baton_user:baton_secure_pass_2026@db:5432/baton_vault
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-baton-enterprise-crypto-secret-key-32bytes-secure!}
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: baton_frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+      - "5173:80"
+
+volumes:
+  pgdata:
+  redisdata:

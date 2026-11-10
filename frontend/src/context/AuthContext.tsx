@@ -8,10 +8,21 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, pass: string) => Promise<void>;
   register: (orgName: string, email: string, pass: string, name: string) => Promise<void>;
+  staticLogin: (role?: 'admin' | 'reviewer' | 'successor') => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const STATIC_DEMO_USER: User = {
+  id: 1,
+  organization_id: 1,
+  email: 'architect@baton-continuity.io',
+  full_name: 'Rohit Dhangar (Chief Continuity Architect)',
+  role: 'admin',
+  is_active: true,
+  created_at: new Date().toISOString(),
+};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
@@ -24,12 +35,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     async function loadUser() {
       if (token) {
+        if (token.startsWith('static_demo_')) {
+          const saved = localStorage.getItem('baton_user');
+          if (saved) {
+            setUser(JSON.parse(saved));
+          } else {
+            setUser(STATIC_DEMO_USER);
+            localStorage.setItem('baton_user', JSON.stringify(STATIC_DEMO_USER));
+          }
+          setIsLoading(false);
+          return;
+        }
+
         try {
           const profile = await api.getMe();
           setUser(profile);
           localStorage.setItem('baton_user', JSON.stringify(profile));
         } catch {
-          logout();
+          // If offline or network error but user cached, preserve session
+          const saved = localStorage.getItem('baton_user');
+          if (saved) {
+            setUser(JSON.parse(saved));
+          } else {
+            logout();
+          }
         }
       }
       setIsLoading(false);
@@ -43,6 +72,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('baton_user', JSON.stringify(data.user));
     setToken(data.access_token);
     setUser(data.user);
+  };
+
+  const staticLogin = (role: 'admin' | 'reviewer' | 'successor' = 'admin') => {
+    const demoUser: User = {
+      ...STATIC_DEMO_USER,
+      role,
+      full_name: role === 'admin' 
+        ? 'Rohit Dhangar (Chief Architect)' 
+        : role === 'reviewer' 
+        ? 'Elena Rostova (Compliance Reviewer)' 
+        : 'David Miller (Incoming Successor)',
+      email: `${role}@baton-continuity.io`
+    };
+    const demoToken = 'static_demo_token_baton_2026';
+    localStorage.setItem('baton_token', demoToken);
+    localStorage.setItem('baton_user', JSON.stringify(demoUser));
+    setToken(demoToken);
+    setUser(demoUser);
   };
 
   const register = async (orgName: string, email: string, pass: string, name: string) => {
@@ -66,7 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, register, staticLogin, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -77,4 +124,3 @@ export const useAuth = () => {
   if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;
 };
-

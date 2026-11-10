@@ -8,7 +8,8 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, pass: string) => Promise<void>;
   register: (orgName: string, email: string, pass: string, name: string) => Promise<void>;
-  staticLogin: (role?: 'admin' | 'reviewer' | 'successor') => void;
+  staticLogin: (role?: 'admin' | 'reviewer' | 'successor' | 'member') => void;
+  switchRole: (role: 'admin' | 'reviewer' | 'successor' | 'member') => void;
   logout: () => void;
 }
 
@@ -74,22 +75,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(data.user);
   };
 
-  const staticLogin = (role: 'admin' | 'reviewer' | 'successor' = 'admin') => {
-    const demoUser: User = {
+  const getRoleUser = (role: 'admin' | 'reviewer' | 'successor' | 'member'): User => {
+    const roleProfiles: Record<string, { name: string; email: string }> = {
+      admin: { name: 'Rohit Dhangar (Chief Continuity Architect)', email: 'architect@baton-continuity.io' },
+      reviewer: { name: 'Elena Rostova (Grounding & Compliance Reviewer)', email: 'reviewer@baton-continuity.io' },
+      successor: { name: 'David Miller (Incoming Lead Successor)', email: 'successor@baton-continuity.io' },
+      member: { name: 'Alex Mercer (Departing Principal Engineer)', email: 'departing@baton-continuity.io' },
+    };
+    const profile = roleProfiles[role] || roleProfiles.admin;
+    return {
       ...STATIC_DEMO_USER,
       role,
-      full_name: role === 'admin' 
-        ? 'Rohit Dhangar (Chief Architect)' 
-        : role === 'reviewer' 
-        ? 'Elena Rostova (Compliance Reviewer)' 
-        : 'David Miller (Incoming Successor)',
-      email: `${role}@baton-continuity.io`
+      full_name: profile.name,
+      email: profile.email,
     };
+  };
+
+  const staticLogin = (role: 'admin' | 'reviewer' | 'successor' | 'member' = 'admin') => {
+    const demoUser = getRoleUser(role);
     const demoToken = 'static_demo_token_baton_2026';
     localStorage.setItem('baton_token', demoToken);
     localStorage.setItem('baton_user', JSON.stringify(demoUser));
     setToken(demoToken);
     setUser(demoUser);
+  };
+
+  const switchRole = (role: 'admin' | 'reviewer' | 'successor' | 'member') => {
+    const updatedUser = getRoleUser(role);
+    setUser(updatedUser);
+    localStorage.setItem('baton_user', JSON.stringify(updatedUser));
   };
 
   const register = async (orgName: string, email: string, pass: string, name: string) => {
@@ -113,7 +127,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, register, staticLogin, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, register, staticLogin, switchRole, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -58,6 +58,16 @@ def health_check():
         "version": "1.0.0"
     }
 
+@app.post(f"{settings.API_V1_STR}/seed")
+def seed_endpoint():
+    from app.services.seed_service import run_seed
+    result = run_seed()
+    return {
+        "status": "success",
+        "message": "Database successfully seeded with realistic enterprise data",
+        "data": result
+    }
+
 @app.get("/")
 def root():
     return {

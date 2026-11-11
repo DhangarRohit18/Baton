@@ -251,3 +251,4 @@ export const SuccessorDashboardView: React.FC<Props> = ({ handovers, activeProje
     </div>
   );
 };
+

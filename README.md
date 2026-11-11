@@ -6,8 +6,9 @@
 [![GitHub Repository](https://img.shields.io/badge/GitHub-DhangarRohit18%2FBaton-blue?logo=github&style=for-the-badge)](https://github.com/DhangarRohit18/Baton)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-**Live Production URL:** [https://frontend-orcin-sigma-74.vercel.app](https://frontend-orcin-sigma-74.vercel.app)  
-*(Production Aliases: [https://baton-continuity.vercel.app](https://baton-continuity.vercel.app) | [https://baton-ai-platform.vercel.app](https://baton-ai-platform.vercel.app))*
+**Live Production URL:** [https://baton-ai-platform.vercel.app](https://baton-ai-platform.vercel.app)  
+*(Public Production Aliases: [https://frontend-orcin-sigma-74.vercel.app](https://frontend-orcin-sigma-74.vercel.app) | [https://baton-continuity.vercel.app](https://baton-continuity.vercel.app))*  
+**Access:** 🌐 **100% Publicly Accessible** &bull; Vercel deployment protection and SSO bypassed for immediate open review.
 
 BATON is a complete, production-oriented AI-powered knowledge continuity SaaS platform engineered to prevent critical institutional memory loss when employees, developers, project leaders, or team members leave an organization.
 

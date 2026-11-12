@@ -66,3 +66,17 @@ def test_exit_interview_and_gap_resolution(client):
     assert "overall_readiness_score" in radar_data
     assert "risk_breakdown" in radar_data
 
+    # Generate Handover pack & verify markdown export
+    handover_gen = client.post("/api/v1/handovers/generate", json={
+        "project_id": proj_id,
+        "title": "Quantum RF Successor Handover Pack"
+    }, headers=headers)
+    assert handover_gen.status_code == 200
+    handover_id = handover_gen.json()["id"]
+
+    export_resp = client.get(f"/api/v1/handovers/{handover_id}/export", headers=headers)
+    assert export_resp.status_code == 200
+    assert "markdown" in export_resp.json()
+    assert "Quantum RF Successor Handover Pack" in export_resp.json()["markdown"]
+
+

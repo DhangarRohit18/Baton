@@ -1,6 +1,10 @@
 import os
 import re
 import io
+import csv
+import json
+import zipfile
+import xml.etree.ElementTree as ET
 from typing import List, Dict, Any, Tuple
 from pypdf import PdfReader
 import httpx
@@ -96,6 +100,81 @@ class DocumentParserService:
             global_offset = page_end + 2 # account for double newline separator
 
         return "\n\n".join(full_text), chunks
+
+    @classmethod
+    def parse_docx(cls, file_bytes: bytes) -> Tuple[str, List[Dict[str, Any]]]:
+        """
+        Extracts structured text from Microsoft Word (.docx) files
+        by inspecting word/document.xml without requiring binary dependencies.
+        """
+        try:
+            with zipfile.ZipFile(io.BytesIO(file_bytes)) as docx_zip:
+                xml_content = docx_zip.read("word/document.xml")
+                tree = ET.fromstring(xml_content)
+                ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+                paragraphs = []
+                for p in tree.iterfind('.//w:p', ns):
+                    texts = [node.text for node in p.iterfind('.//w:t', ns) if node.text]
+                    if texts:
+                        clean_line = ''.join(texts).strip()
+                        if clean_line:
+                            paragraphs.append(clean_line)
+                full_text = "\n\n".join(paragraphs)
+                if not full_text:
+                    full_text = "Empty Word document."
+                chunks = cls.chunk_text(full_text, chunk_size=800, overlap=100)
+                return full_text, chunks
+        except Exception as e:
+            # Fallback to UTF-8 lossy decode if archive corrupted
+            raw_text = file_bytes.decode("utf-8", errors="replace")
+            return raw_text, cls.chunk_text(raw_text)
+
+    @classmethod
+    def parse_csv(cls, file_bytes: bytes) -> Tuple[str, List[Dict[str, Any]]]:
+        """
+        Parses structured CSV tabular files and serializes into structured
+        Markdown tables for deterministic grounding verification.
+        """
+        text_data = file_bytes.decode("utf-8", errors="replace")
+        reader = csv.reader(io.StringIO(text_data))
+        rows = list(reader)
+        if not rows:
+            return "Empty CSV dataset.", []
+
+        header = rows[0]
+        markdown_lines = [
+            f"### Tabular Dataset Schema ({len(rows) - 1} rows, {len(header)} columns)",
+            "| " + " | ".join(header) + " |",
+            "| " + " | ".join(["---"] * max(1, len(header))) + " |"
+        ]
+        # Include top 100 sample records for semantic grounding
+        for row in rows[1:101]:
+            # Clean cells of pipes to avoid breaking markdown tables
+            safe_row = [cell.replace("|", "/") for cell in row]
+            markdown_lines.append("| " + " | ".join(safe_row) + " |")
+
+        if len(rows) > 101:
+            markdown_lines.append(f"\n*(Remaining {len(rows) - 101} records archived in dataset)*")
+
+        full_text = "\n".join(markdown_lines)
+        chunks = cls.chunk_text(full_text, chunk_size=900, overlap=120)
+        return full_text, chunks
+
+    @classmethod
+    def parse_json(cls, file_bytes: bytes) -> Tuple[str, List[Dict[str, Any]]]:
+        """
+        Parses structured JSON payloads into formatted schema and data definitions.
+        """
+        raw = file_bytes.decode("utf-8", errors="replace")
+        try:
+            parsed = json.loads(raw)
+            formatted = json.dumps(parsed, indent=2)
+            summary = f"### Structured JSON Data Specification\n```json\n{formatted}\n```"
+        except Exception:
+            summary = f"### Raw JSON Data\n{raw}"
+
+        chunks = cls.chunk_text(summary, chunk_size=850, overlap=100)
+        return summary, chunks
 
     @classmethod
     async def fetch_github_repo(cls, repo_url: str, token: str = None, branch: str = "main") -> Tuple[str, str, Dict[str, Any]]:

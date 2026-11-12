@@ -87,6 +87,24 @@ export const HandoverPage: React.FC = () => {
     alert('Copied to clipboard!');
   };
 
+  const handleExportMarkdown = async () => {
+    if (!activeHandover) return;
+    try {
+      const res = await api.exportHandoverMarkdown(activeHandover.id);
+      const blob = new Blob([res.markdown], { type: 'text/markdown;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', res.filename || `baton-handover-${activeHandover.id}.md`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      alert('Export failed: ' + err.message);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -179,6 +197,15 @@ export const HandoverPage: React.FC = () => {
                   >
                     <QrCode className="w-3.5 h-3.5" />
                     <span>Mint QR Bridge</span>
+                  </button>
+
+                  <button
+                    onClick={handleExportMarkdown}
+                    className="p-1.5 bg-slate-900 border border-slate-800 text-slate-400 hover:text-teal-300 rounded-lg text-xs flex items-center gap-1 transition-colors"
+                    title="Export Portable Markdown"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span className="hidden sm:inline text-[11px] font-semibold pr-1">Export .md</span>
                   </button>
 
                   <button

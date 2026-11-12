@@ -5,7 +5,8 @@ import { api } from '../services/api';
 import { ExitInterview, InterviewResponse } from '../types';
 import {
   FileText, CheckCircle2, UserX, AlertTriangle, Send,
-  Sparkles, RefreshCw, MessageSquare, ArrowRight, ShieldCheck
+  Sparkles, RefreshCw, MessageSquare, ArrowRight, ShieldCheck,
+  Mic, MicOff
 } from 'lucide-react';
 
 export const ExitInterviewPage: React.FC = () => {
@@ -25,6 +26,51 @@ export const ExitInterviewPage: React.FC = () => {
   // Active answer editing
   const [activeAnswers, setActiveAnswers] = useState<Record<number, string>>({});
   const [savingAnswerId, setSavingAnswerId] = useState<number | null>(null);
+  const [recordingResponseId, setRecordingResponseId] = useState<number | null>(null);
+
+  const toggleVoiceRecording = (responseId: number) => {
+    if (recordingResponseId === responseId) {
+      setRecordingResponseId(null);
+      return;
+    }
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Browser speech recognition is not supported in this client. Please test in Chrome or Edge.');
+      return;
+    }
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        setRecordingResponseId(responseId);
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+          setActiveAnswers((prev) => ({
+            ...prev,
+            [responseId]: prev[responseId] ? `${prev[responseId].trim()} ${transcript}` : transcript,
+          }));
+        }
+      };
+
+      recognition.onerror = () => {
+        setRecordingResponseId(null);
+      };
+
+      recognition.onend = () => {
+        setRecordingResponseId(null);
+      };
+
+      recognition.start();
+    } catch {
+      setRecordingResponseId(null);
+    }
+  };
 
   const loadInterviews = async () => {
     if (!activeProject) return;
@@ -246,18 +292,37 @@ export const ExitInterviewPage: React.FC = () => {
 
                         {/* Answer text area */}
                         <div className="space-y-2">
-                          <textarea
-                            rows={3}
-                            placeholder="Enter operational details, credentials location, architecture decisions, or next steps..."
-                            value={activeAnswers[resp.id] ?? ''}
-                            onChange={(e) =>
-                              setActiveAnswers({
-                                ...activeAnswers,
-                                [resp.id]: e.target.value,
-                              })
-                            }
-                            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 leading-relaxed font-sans"
-                          />
+                          <div className="relative">
+                            <textarea
+                              rows={3}
+                              placeholder="Enter operational details, credentials location, architecture decisions, or next steps..."
+                              value={activeAnswers[resp.id] ?? ''}
+                              onChange={(e) =>
+                                setActiveAnswers({
+                                  ...activeAnswers,
+                                  [resp.id]: e.target.value,
+                                })
+                              }
+                              className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 pr-10 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 leading-relaxed font-sans"
+                            />
+                            {/* Voice dictation mic button */}
+                            <button
+                              type="button"
+                              onClick={() => toggleVoiceRecording(resp.id)}
+                              className={`absolute right-2.5 bottom-3.5 p-1.5 rounded-lg border transition-all ${
+                                recordingResponseId === resp.id
+                                  ? 'bg-rose-500/20 border-rose-500 text-rose-400 animate-pulse'
+                                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/40'
+                              }`}
+                              title={recordingResponseId === resp.id ? 'Listening... click to stop' : 'Dictate response via voice'}
+                            >
+                              {recordingResponseId === resp.id ? (
+                                <MicOff className="w-3.5 h-3.5" />
+                              ) : (
+                                <Mic className="w-3.5 h-3.5" />
+                              )}
+                            </button>
+                          </div>
 
                           <div className="flex items-center justify-between">
                             <div className="text-[10px] text-slate-500 flex items-center gap-1">

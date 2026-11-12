@@ -34,3 +34,35 @@ def test_register_and_login(client):
     assert me_resp.status_code == 200
     assert me_resp.json()["full_name"] == "Chief Engineer"
 
+    # 4. Refresh token
+    refresh_resp = client.post("/api/v1/auth/refresh", headers=headers)
+    assert refresh_resp.status_code == 200
+    assert "access_token" in refresh_resp.json()
+
+    # 5. Forgot password flow
+    forgot_resp = client.post("/api/v1/auth/forgot-password", json={"email": "chief.engineer@acme.com"})
+    assert forgot_resp.status_code == 200
+    reset_token = forgot_resp.json()["reset_token"]
+    assert reset_token is not None
+
+    # 6. Reset password using valid reset token
+    reset_resp = client.post("/api/v1/auth/reset-password", json={
+        "token": reset_token,
+        "new_password": "BrandNewPassword2026!"
+    })
+    assert reset_resp.status_code == 200
+
+    # 7. Login with newly reset password
+    new_login = client.post("/api/v1/auth/login", json={
+        "email": "chief.engineer@acme.com",
+        "password": "BrandNewPassword2026!"
+    })
+    assert new_login.status_code == 200
+
+    # 8. Setup MFA
+    mfa_resp = client.post("/api/v1/auth/mfa/setup", headers=headers)
+    assert mfa_resp.status_code == 200
+    assert "secret" in mfa_resp.json()
+    assert "otpauth_url" in mfa_resp.json()
+
+

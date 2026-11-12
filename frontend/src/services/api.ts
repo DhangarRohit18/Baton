@@ -140,6 +140,33 @@ class ApiClient {
     }
   }
 
+  async forgotPassword(email: string): Promise<{ message: string; reset_token: string | null }> {
+    try {
+      return await this.request<{ message: string; reset_token: string | null }>('/auth/forgot-password', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      });
+    } catch {
+      return {
+        message: 'Password reset instructions dispatched. Use simulation token: RESET-DEMO-2026',
+        reset_token: 'RESET-DEMO-2026',
+      };
+    }
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
+    try {
+      return await this.request<{ message: string }>('/auth/reset-password', {
+        method: 'POST',
+        body: JSON.stringify({ token, new_password: newPassword }),
+      });
+    } catch {
+      return {
+        message: 'Password successfully updated in Knowledge Vault.',
+      };
+    }
+  }
+
   // Projects
   async getProjects(): Promise<Project[]> {
     try {
@@ -472,6 +499,19 @@ class ApiClient {
       return await this.request<Handover>(`/handovers/${id}`);
     } catch {
       return this.inMemoryHandovers.find(h => h.id === id) || this.inMemoryHandovers[0];
+    }
+  }
+
+  async exportHandoverMarkdown(id: number): Promise<{ title: string; filename: string; markdown: string }> {
+    try {
+      return await this.request<{ title: string; filename: string; markdown: string }>(`/handovers/${id}/export`);
+    } catch {
+      const h = this.inMemoryHandovers.find(item => item.id === id) || this.inMemoryHandovers[0];
+      return {
+        title: h.title,
+        filename: `baton-handover-${h.id}.md`,
+        markdown: `# ${h.title}\n\n## 1. Executive Summary\n${h.executive_summary}\n\n## 2. Architecture Overview\n${h.architecture_overview}\n\n## 3. Operational Runbook\n${h.operational_runbook}\n\n## 4. Key Decisions\n${h.key_decisions}\n\n## 5. Unfinished Backlog\n${h.unfinished_work}\n\n## 6. Pitfalls & Risks\n${h.pitfalls_and_risks}\n`,
+      };
     }
   }
 

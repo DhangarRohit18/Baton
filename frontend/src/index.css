@@ -112,3 +112,37 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--border-hover);
 }
+
+/* Print Styles for Executive Handover Dossiers */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+
+  nav, header, aside, button, .no-print {
+    display: none !important;
+  }
+
+  #root {
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .bg-\[\#10182E\], .bg-slate-900\/70, .bg-slate-950\/70 {
+    background: transparent !important;
+    border-color: #CBD5E1 !important;
+    color: #0F172A !important;
+  }
+
+  .text-slate-100, .text-slate-200, .text-slate-300, .text-slate-400 {
+    color: #1E293B !important;
+  }
+
+  h1, h2, h3, h4 {
+    color: #0F172A !important;
+    page-break-after: avoid;
+  }
+}
+

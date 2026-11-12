@@ -14,6 +14,24 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str = Field(..., min_length=6)
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: Optional[str] = None
+
+class MFASetupResponse(BaseModel):
+    secret: str
+    otpauth_url: str
+    qr_svg: Optional[str] = None
+
+class MFAVerifyRequest(BaseModel):
+    code: str = Field(..., min_length=6, max_length=6)
+
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"

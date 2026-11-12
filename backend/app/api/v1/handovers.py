@@ -142,3 +142,65 @@ def get_handover(
         raise HTTPException(status_code=404, detail="Handover not found")
     return handover
 
+@router.get("/{handover_id}/export")
+def export_handover_markdown(
+    handover_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Exports the complete Handover Pack as an immutable, portable Markdown artifact.
+    """
+    handover = db.query(Handover).join(Project).filter(
+        Handover.id == handover_id,
+        Project.organization_id == current_user.organization_id
+    ).first()
+    if not handover:
+        raise HTTPException(status_code=404, detail="Handover not found")
+
+    content = f"""# {handover.title}
+*BATON Institutional Knowledge Continuity Handover Pack*
+*Generated: {handover.created_at}*
+*Readiness Score: {handover.readiness_score}%*
+*Verified Grounded Claims: {handover.verified_claims_count}*
+
+---
+
+## 1. Executive Transition Brief
+{handover.executive_summary}
+
+---
+
+## 2. Architecture Baseline & Decisions
+{handover.architecture_overview}
+
+---
+
+## 3. Core Decisions & Technical Rationales
+{handover.key_decisions}
+
+---
+
+## 4. Unfinished Work & Active Backlog
+{handover.unfinished_work}
+
+---
+
+## 5. Technical Dependencies & Pitfalls
+{handover.pitfalls_and_risks}
+
+---
+
+## 6. Operational Runbook & Credentials Vault
+{handover.operational_runbook}
+
+---
+*Exported from BATON Knowledge Vault with zero-trust cryptographic grounding.*
+"""
+    return {
+        "title": handover.title,
+        "filename": f"baton-handover-{handover.id}.md",
+        "markdown": content
+    }
+
+

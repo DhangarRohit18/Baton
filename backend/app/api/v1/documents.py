@@ -1,5 +1,6 @@
 import os
 import json
+import hashlib
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
@@ -25,6 +26,13 @@ async def _process_ingested_content(
     raw_text: str,
     metadata: dict = None
 ) -> Document:
+    # Deterministic cryptographic content hash for zero-trust grounding verification
+    content_hash = hashlib.sha256(raw_text.encode('utf-8')).hexdigest()
+    meta = metadata or {}
+    meta["sha256"] = content_hash
+    meta["content_hash"] = content_hash
+    meta["char_length"] = len(raw_text)
+
     # 1. Create Document record
     doc = Document(
         project_id=project_id,
@@ -33,7 +41,7 @@ async def _process_ingested_content(
         source_url=source_url or "",
         raw_content=raw_text,
         char_count=len(raw_text),
-        metadata_json=json.dumps(metadata or {})
+        metadata_json=json.dumps(meta)
     )
     db.add(doc)
     db.flush()
@@ -163,11 +171,20 @@ async def upload_document(
 
     filename = file.filename or "uploaded_file"
     file_bytes = await file.read()
+    lower_name = filename.lower()
 
-    if filename.lower().endswith(".pdf"):
+    if lower_name.endswith(".pdf"):
         raw_text, _ = DocumentParserService.parse_pdf(file_bytes)
         if not raw_text.strip():
             raise HTTPException(status_code=400, detail="Could not extract text from PDF document.")
+    elif lower_name.endswith((".docx", ".doc")):
+        raw_text, _ = DocumentParserService.parse_docx(file_bytes)
+        if not raw_text.strip():
+            raise HTTPException(status_code=400, detail="Could not extract text from Word document.")
+    elif lower_name.endswith((".csv", ".tsv")):
+        raw_text, _ = DocumentParserService.parse_csv(file_bytes)
+    elif lower_name.endswith(".json"):
+        raw_text, _ = DocumentParserService.parse_json(file_bytes)
     else:
         # Markdown, TXT, source files
         raw_text = file_bytes.decode("utf-8", errors="replace")

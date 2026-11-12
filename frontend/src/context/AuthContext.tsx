@@ -35,6 +35,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     async function loadUser() {
+      // Support seamless role activation from query parameters e.g. ?role=reviewer or ?role=successor
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const roleParam = urlParams.get('role');
+        if (roleParam && ['admin', 'reviewer', 'successor', 'member'].includes(roleParam)) {
+          const demoUser = getRoleUser(roleParam as any);
+          const demoToken = 'static_demo_token_baton_2026';
+          localStorage.setItem('baton_token', demoToken);
+          localStorage.setItem('baton_user', JSON.stringify(demoUser));
+          setToken(demoToken);
+          setUser(demoUser);
+          setIsLoading(false);
+          return;
+        }
+      } catch (e) {
+        console.error('Error parsing role parameter:', e);
+      }
+
       if (token) {
         if (token.startsWith('static_demo_')) {
           const saved = localStorage.getItem('baton_user');

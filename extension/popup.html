@@ -10,18 +10,17 @@
       --card-subtle: #0B132B;
       --accent-cyan: #06B6D4;
       --accent-teal: #0D9488;
-      --accent-hover: #0891B2;
       --text-main: #F8FAFC;
       --text-secondary: #CBD5E1;
       --text-muted: #94A3B8;
       --border-color: #1E293B;
-      --border-focus: #06B6D4;
       --danger: #EF4444;
       --success: #10B981;
+      --warning: #F59E0B;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body {
-      width: 380px;
+      width: 390px;
       background: var(--bg-dark);
       color: var(--text-main);
       padding: 16px;
@@ -95,7 +94,7 @@
       border: 1px solid var(--border-color);
       border-radius: 10px;
       padding: 10px 12px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -125,11 +124,29 @@
       border: 1px solid var(--border-color);
       color: var(--accent-cyan);
       font-size: 11px;
-      font-weight: 600;
-      padding: 4px 8px;
+      font-weight: 700;
+      padding: 5px 8px;
       border-radius: 6px;
       cursor: pointer;
       outline: none;
+    }
+
+    /* Role Capability Badge */
+    .role-scope-banner {
+      background: rgba(6, 182, 212, 0.08);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      border-radius: 8px;
+      padding: 6px 10px;
+      margin-bottom: 12px;
+      font-size: 10.5px;
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .role-scope-icon {
+      font-size: 12px;
+      shrink: 0;
     }
 
     /* Dashboard Action Buttons Bar */
@@ -149,36 +166,93 @@
     }
     .dashboard-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 6px;
     }
+
+    /* Dashboard Button Styles: Active vs Deactive */
     .btn-dash {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      color: var(--text-secondary);
       border-radius: 8px;
-      padding: 7px 4px;
-      font-size: 11px;
-      font-weight: 600;
+      padding: 8px 10px;
       display: flex;
       flex-direction: column;
-      align-items: center;
       gap: 3px;
       cursor: pointer;
-      text-decoration: none;
-      transition: all 0.15s ease;
-      text-align: center;
+      transition: all 0.2s ease;
+      text-align: left;
+      position: relative;
     }
-    .btn-dash:hover {
-      background: var(--card-subtle);
+    
+    /* ACTIVE DASHBOARD BUTTON */
+    .btn-dash.active-feature {
+      background: linear-gradient(145deg, rgba(16, 24, 46, 0.95), rgba(11, 19, 43, 0.95));
+      border: 1px solid rgba(6, 182, 212, 0.45);
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.12);
+      cursor: pointer;
+    }
+    .btn-dash.active-feature:hover {
       border-color: var(--accent-cyan);
-      color: var(--text-main);
       transform: translateY(-1px);
+      box-shadow: 0 2px 12px rgba(6, 182, 212, 0.25);
     }
-    .btn-dash svg {
+    .btn-dash.active-feature .dash-title {
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 11px;
+    }
+    .btn-dash.active-feature .dash-badge {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34D399;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      align-self: flex-start;
+      margin-top: 2px;
+    }
+
+    /* DEACTIVATED / LOCKED DASHBOARD BUTTON */
+    .btn-dash.deactive-feature {
+      opacity: 0.45;
+      background: rgba(11, 19, 43, 0.6);
+      border: 1px dashed #334155;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+    }
+    .btn-dash.deactive-feature:hover {
+      opacity: 0.7;
+      border-color: #64748B;
+    }
+    .btn-dash.deactive-feature .dash-title {
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 11px;
+    }
+    .btn-dash.deactive-feature .dash-badge {
+      background: rgba(100, 116, 139, 0.2);
+      border: 1px solid rgba(100, 116, 139, 0.4);
+      color: #94A3B8;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      align-self: flex-start;
+      margin-top: 2px;
+    }
+    .dash-icon-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dash-icon-title svg {
       width: 14px;
       height: 14px;
-      stroke: var(--accent-cyan);
+      shrink: 0;
     }
 
     /* Page Preview Card */
@@ -322,6 +396,11 @@
       border: 1px solid rgba(16, 185, 129, 0.4);
       color: #6EE7B7;
     }
+    .status-warning {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #FCD34D;
+    }
     .status-error {
       background: rgba(239, 68, 68, 0.15);
       border: 1px solid rgba(239, 68, 68, 0.4);
@@ -339,28 +418,6 @@
       font-size: 10px;
       text-decoration: none;
       cursor: pointer;
-    }
-
-    /* Collapsible Custom Credentials */
-    .accordion-toggle {
-      margin-top: 12px;
-      text-align: center;
-      font-size: 10px;
-      color: var(--text-muted);
-      cursor: pointer;
-      padding: 4px;
-      text-decoration: underline;
-    }
-    .accordion-toggle:hover {
-      color: var(--accent-cyan);
-    }
-    .accordion-content {
-      display: none;
-      margin-top: 8px;
-      padding: 10px;
-      background: var(--card-subtle);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
     }
 
     /* Footer */
@@ -393,14 +450,14 @@
     </div>
     <div class="status-pill">
       <span class="pulse-dot"></span>
-      <span>Vault Active</span>
+      <span id="header-status-label">Vault Active</span>
     </div>
   </div>
 
   <!-- Active Persona Card (Zero-Login Barrier) -->
   <div class="persona-card">
     <div class="persona-meta">
-      <div class="persona-title">Active Enterprise Role</div>
+      <div class="persona-title">Active Role Context</div>
       <div class="persona-name" id="current-persona-name">Rohit Dhangar (Chief Architect)</div>
     </div>
     <select id="persona-role-select" class="role-select" title="Switch Role / Persona">
@@ -410,38 +467,91 @@
     </select>
   </div>
 
-  <!-- Direct Dashboard Redirect Buttons -->
+  <!-- Role Capabilities Scope Banner -->
+  <div class="role-scope-banner" id="role-scope-banner">
+    <span class="role-scope-icon">⚡</span>
+    <span id="role-scope-text">Active Scope: Full Architecture, Radar &amp; Governance</span>
+  </div>
+
+  <!-- Role-Filtered Dashboard Action Buttons -->
   <div class="dashboard-bar">
     <div class="bar-label">
-      <span>Direct Web Dashboards</span>
+      <span>Role Dashboards &bull; Dynamic Access</span>
       <span style="color: var(--accent-cyan); cursor: pointer;" id="refresh-projects-btn">↻ Sync</span>
     </div>
+    
     <div class="dashboard-grid">
-      <button class="btn-dash" id="open-dash-main" title="Open Main Overview Dashboard">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="3" width="7" height="9"/>
-          <rect x="14" y="3" width="7" height="5"/>
-          <rect x="14" y="12" width="7" height="9"/>
-          <rect x="3" y="16" width="7" height="5"/>
-        </svg>
-        <span>Dashboard</span>
+      <!-- 1. Admin Radar Dashboard -->
+      <button class="btn-dash" id="dash-radar" data-dash="radar" data-allowed-roles="admin" title="Open Continuity Risk Radar">
+        <div class="dash-icon-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          <span class="dash-title">Architecture Radar</span>
+        </div>
+        <span class="dash-badge" id="badge-radar">Active</span>
       </button>
 
-      <button class="btn-dash" id="open-dash-claims" title="Open Grounding Claim Ledger">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <span>Claim Ledger</span>
+      <!-- 2. Admin Document Ingestion & Sources -->
+      <button class="btn-dash" id="dash-ingestion" data-dash="ingestion" data-allowed-roles="admin" title="Open Document Ingestion Hub">
+        <div class="dash-icon-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span class="dash-title">Source Ingestion</span>
+        </div>
+        <span class="dash-badge" id="badge-ingestion">Active</span>
       </button>
 
-      <button class="btn-dash" id="open-dash-handover" title="Open Handover &amp; QR Bridge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
-        </svg>
-        <span>Handovers</span>
+      <!-- 3. Reviewer Claim Ledger -->
+      <button class="btn-dash" id="dash-claims" data-dash="claims" data-allowed-roles="reviewer" title="Open Claim Ledger &amp; Evidence Grounding">
+        <div class="dash-icon-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span class="dash-title">Claim Ledger</span>
+        </div>
+        <span class="dash-badge" id="badge-claims">Active</span>
+      </button>
+
+      <!-- 4. Reviewer Gaps & Contradictions -->
+      <button class="btn-dash" id="dash-gaps" data-dash="gaps" data-allowed-roles="reviewer" title="Open Knowledge Gaps &amp; Conflicts">
+        <div class="dash-icon-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span class="dash-title">Gaps &amp; Conflicts</span>
+        </div>
+        <span class="dash-badge" id="badge-gaps">Active</span>
+      </button>
+
+      <!-- 5. Successor Handover Packs -->
+      <button class="btn-dash" id="dash-handover" data-dash="handover" data-allowed-roles="successor" title="Open Handover Packs &amp; Runbooks">
+        <div class="dash-icon-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+          </svg>
+          <span class="dash-title">Handover Packs</span>
+        </div>
+        <span class="dash-badge" id="badge-handover">Active</span>
+      </button>
+
+      <!-- 6. Successor Onboarding & QR Bridge -->
+      <button class="btn-dash" id="dash-successor" data-dash="successor" data-allowed-roles="successor" title="Open Successor 30-Day Onboarding &amp; QR Bridge">
+        <div class="dash-icon-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span class="dash-title">Successor Portal</span>
+        </div>
+        <span class="dash-badge" id="badge-successor">Active</span>
       </button>
     </div>
   </div>
@@ -459,7 +569,7 @@
     <div class="preview-url" id="page-url">Inspecting browser tab...</div>
   </div>
 
-  <!-- Capture Controls -->
+  <!-- Capture Controls (Role-Tailored) -->
   <div class="form-group">
     <label>Target Monitored Project</label>
     <select id="project-select">
@@ -470,7 +580,7 @@
   </div>
 
   <div class="form-group">
-    <label>Knowledge Category</label>
+    <label id="category-label">Knowledge Category</label>
     <div class="tag-pills" id="category-pills">
       <span class="tag-pill active" data-tag="architecture">Architecture</span>
       <span class="tag-pill" data-tag="operational">Operational</span>
@@ -481,57 +591,35 @@
   </div>
 
   <div class="form-group">
-    <label>Context Rationale for Successors</label>
+    <label id="notes-label">Context Rationale for Successors</label>
     <textarea id="capture-notes" rows="2" placeholder="Explain technical tradeoffs, operational traps, or credentials location..."></textarea>
   </div>
 
   <div class="btn-group">
-    <button class="btn btn-primary" id="btn-capture-all" title="Extract and ground entire webpage text">
+    <button class="btn btn-primary" id="btn-capture-all" title="Extract and ground page text">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
         <polyline points="7 10 12 15 17 10"></polyline>
         <line x1="12" y1="15" x2="12" y2="3"></line>
       </svg>
-      <span>Capture Page</span>
+      <span id="btn-capture-all-text">Capture Page</span>
     </button>
-    <button class="btn btn-secondary" id="btn-capture-selection" title="Extract only highlighted selection">
+    <button class="btn btn-secondary" id="btn-capture-selection" title="Extract highlighted text selection">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <polyline points="4 7 4 4 20 4 20 7"></polyline>
         <line x1="9" y1="20" x2="15" y2="20"></line>
         <line x1="12" y1="4" x2="12" y2="20"></line>
       </svg>
-      <span>Capture Highlight</span>
+      <span id="btn-capture-sel-text">Capture Highlight</span>
     </button>
   </div>
 
   <!-- Status Notification Box with Instant Jump Link -->
   <div class="status-msg" id="status-box"></div>
 
-  <!-- Optional Custom Credentials Accordion -->
-  <div class="accordion-toggle" id="toggle-credentials">
-    Advanced: Custom Server Login / Settings ▼
-  </div>
-  <div class="accordion-content" id="credentials-content">
-    <div class="form-group">
-      <label>Platform API URL</label>
-      <input type="text" id="api-base-input" value="https://baton-ai-platform.vercel.app/api/v1">
-    </div>
-    <div class="form-group">
-      <label>Corporate Email</label>
-      <input type="email" id="custom-email" placeholder="engineer@organization.com">
-    </div>
-    <div class="form-group">
-      <label>Access Password</label>
-      <input type="password" id="custom-password" placeholder="••••••••">
-    </div>
-    <button class="btn btn-secondary" id="btn-custom-login" style="width: 100%; margin-top: 4px;">
-      Authenticate Custom Token
-    </button>
-  </div>
-
   <!-- Footer -->
   <div class="footer">
-    <span>BATON v1.0.0 &bull; Grounded Continuity</span>
+    <span id="footer-role-label">Role: Architect / Full Admin</span>
     <a href="#" id="footer-web-link">Launch Web Platform ↗</a>
   </div>
 

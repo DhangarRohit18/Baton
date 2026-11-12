@@ -6,20 +6,53 @@ const PERSONAS = {
     name: "Rohit Dhangar (Chief Architect)",
     email: "architect@baton-continuity.io",
     token: "static_demo_token_baton_2026_admin",
-    role: "admin"
+    role: "admin",
+    scopeIcon: "👑",
+    scopeText: "Active Scope: Architecture Radar, Source Ingestion & Governance",
+    activeDashboards: ["radar", "ingestion"],
+    deactiveDashboards: ["claims", "gaps", "handover", "successor"],
+    captureAllLabel: "Capture Architecture Spec",
+    captureSelLabel: "Capture Architecture Note",
+    category: "architecture",
+    footerText: "Active Role: Chief Architect / Full Admin"
   },
   reviewer: {
-    name: "Maya Lin (Senior Compliance Reviewer)",
+    name: "Elena Rostova (Compliance & Claim Reviewer)",
     email: "reviewer@baton-continuity.io",
     token: "static_demo_token_baton_2026_reviewer",
-    role: "reviewer"
+    role: "reviewer",
+    scopeIcon: "🛡️",
+    scopeText: "Active Scope: Grounding Verification, Claim Ledger & Gap Audits",
+    activeDashboards: ["claims", "gaps"],
+    deactiveDashboards: ["radar", "ingestion", "handover", "successor"],
+    captureAllLabel: "Verify & Ingest Evidence",
+    captureSelLabel: "Capture Grounding Citation",
+    category: "operational",
+    footerText: "Active Role: Grounding & Compliance Reviewer"
   },
   successor: {
-    name: "Alex Mercer (Incoming Successor Lead)",
+    name: "David Miller (Incoming Lead Successor)",
     email: "successor@baton-continuity.io",
     token: "static_demo_token_baton_2026_successor",
-    role: "successor"
+    role: "successor",
+    scopeIcon: "🚀",
+    scopeText: "Active Scope: Handover Packs, Runbooks & QR Bridge Onboarding",
+    activeDashboards: ["handover", "successor"],
+    deactiveDashboards: ["radar", "ingestion", "claims", "gaps"],
+    captureAllLabel: "Capture Onboarding Runbook",
+    captureSelLabel: "Capture Step / Credential Note",
+    category: "runbook",
+    footerText: "Active Role: Incoming Lead Successor"
   }
+};
+
+const DASHBOARD_ROUTES = {
+  radar: { path: "/dashboard", name: "Architecture Radar", requiredRole: "admin" },
+  ingestion: { path: "/ingestion", name: "Source Ingestion", requiredRole: "admin" },
+  claims: { path: "/claims", name: "Claim Ledger", requiredRole: "reviewer" },
+  gaps: { path: "/gaps", name: "Gaps & Conflicts", requiredRole: "reviewer" },
+  handover: { path: "/handovers", name: "Handover Packs", requiredRole: "successor" },
+  successor: { path: "/successor", name: "Successor Portal", requiredRole: "successor" }
 };
 
 const DEFAULT_PROJECTS = [
@@ -32,6 +65,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Elements
   const personaNameEl = document.getElementById("current-persona-name");
   const personaSelect = document.getElementById("persona-role-select");
+  const roleScopeText = document.getElementById("role-scope-text");
+  const roleScopeBanner = document.getElementById("role-scope-banner");
   const pageTitleEl = document.getElementById("page-title");
   const pageUrlEl = document.getElementById("page-url");
   const projectSelect = document.getElementById("project-select");
@@ -39,57 +74,120 @@ document.addEventListener("DOMContentLoaded", async () => {
   const statusBox = document.getElementById("status-box");
   const btnCaptureAll = document.getElementById("btn-capture-all");
   const btnCaptureSelection = document.getElementById("btn-capture-selection");
+  const btnCaptureAllText = document.getElementById("btn-capture-all-text");
+  const btnCaptureSelText = document.getElementById("btn-capture-sel-text");
   const categoryPills = document.querySelectorAll(".tag-pill");
   const refreshProjectsBtn = document.getElementById("refresh-projects-btn");
-  const toggleCredentials = document.getElementById("toggle-credentials");
-  const credentialsContent = document.getElementById("credentials-content");
-  const apiBaseInput = document.getElementById("api-base-input");
-  const btnCustomLogin = document.getElementById("btn-custom-login");
-
-  // Dashboard buttons
-  const btnOpenDashMain = document.getElementById("open-dash-main");
-  const btnOpenDashClaims = document.getElementById("open-dash-claims");
-  const btnOpenDashHandover = document.getElementById("open-dash-handover");
+  const footerRoleLabel = document.getElementById("footer-role-label");
   const footerWebLink = document.getElementById("footer-web-link");
 
+  let activeRole = "admin";
   let selectedCategory = "architecture";
 
-  function showStatus(text, isError = false, actionUrl = null, actionText = null) {
+  function showStatus(text, type = "success", actionCallback = null, actionText = null) {
     statusBox.style.display = "block";
-    statusBox.className = "status-msg " + (isError ? "status-error" : "status-success");
+    statusBox.className = "status-msg " + (type === "error" ? "status-error" : type === "warning" ? "status-warning" : "status-success");
     statusBox.innerHTML = `<div>${text}</div>`;
-    if (actionUrl && actionText) {
-      const a = document.createElement("a");
-      a.className = "status-action-btn";
-      a.textContent = actionText;
-      a.href = actionUrl;
-      a.target = "_blank";
-      statusBox.appendChild(a);
+    if (actionText && actionCallback) {
+      const btn = document.createElement("button");
+      btn.className = "status-action-btn";
+      btn.textContent = actionText;
+      btn.onclick = actionCallback;
+      statusBox.appendChild(btn);
     }
   }
 
-  // 1. Load active persona or default to Lead Architect (Zero-Login Barrier)
-  const stored = await chrome.storage.local.get(["activeRole", "customToken", "apiBase"]);
-  let activeRole = stored.activeRole || "admin";
-  let apiBase = stored.apiBase || DEFAULT_API_BASE;
-  apiBaseInput.value = apiBase;
+  function openDashboardRoute(path, role) {
+    const targetUrl = `${DEFAULT_WEB_URL}${path}?role=${role}`;
+    chrome.tabs.create({ url: targetUrl });
+  }
 
-  function applyPersona(role) {
+  // 1. Role Activation & Feature Deactivation Engine
+  function applyRole(role) {
     activeRole = role;
     personaSelect.value = role;
     const persona = PERSONAS[role] || PERSONAS.admin;
+
+    // Update Profile & Scope
     personaNameEl.textContent = persona.name;
+    roleScopeText.textContent = persona.scopeText;
+    footerRoleLabel.textContent = persona.footerText;
+    btnCaptureAllText.textContent = persona.captureAllLabel;
+    btnCaptureSelText.textContent = persona.captureSelLabel;
+    selectedCategory = persona.category;
+
+    // Update Category Pills
+    categoryPills.forEach((p) => {
+      if (p.getAttribute("data-tag") === persona.category) {
+        p.classList.add("active");
+      } else {
+        p.classList.remove("active");
+      }
+    });
+
+    // Save active role to extension storage
     chrome.storage.local.set({ activeRole: role, batonToken: persona.token });
+
+    // DYNAMIC FEATURE ACTIVATION / DEACTIVATION FOR DASHBOARDS
+    Object.keys(DASHBOARD_ROUTES).forEach((key) => {
+      const btn = document.getElementById(`dash-${key}`);
+      const badge = document.getElementById(`badge-${key}`);
+      const routeInfo = DASHBOARD_ROUTES[key];
+
+      if (!btn) return;
+
+      const isActiveForRole = persona.activeDashboards.includes(key);
+
+      // Clone node to drop stale event listeners cleanly
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+      const newBadge = document.getElementById(`badge-${key}`);
+
+      if (isActiveForRole) {
+        newBtn.className = "btn-dash active-feature";
+        newBtn.setAttribute("title", `Open ${routeInfo.name} (${persona.name})`);
+        newBadge.className = "dash-badge";
+        newBadge.textContent = "ACTIVE";
+        newBadge.style.color = "#34D399";
+        newBadge.style.background = "rgba(16, 185, 129, 0.2)";
+
+        newBtn.addEventListener("click", () => {
+          openDashboardRoute(routeInfo.path, role);
+        });
+      } else {
+        newBtn.className = "btn-dash deactive-feature";
+        newBtn.setAttribute("title", `Locked for ${role.toUpperCase()} (Requires ${routeInfo.requiredRole.toUpperCase()})`);
+        newBadge.className = "dash-badge";
+        newBadge.textContent = "LOCKED";
+        newBadge.style.color = "#94A3B8";
+        newBadge.style.background = "rgba(100, 116, 139, 0.2)";
+
+        newBtn.addEventListener("click", () => {
+          showStatus(
+            `🔒 '${routeInfo.name}' is deactivated for ${persona.role.toUpperCase()}. It is exclusively configured for the ${routeInfo.requiredRole.toUpperCase()} persona.`,
+            "warning",
+            () => {
+              applyRole(routeInfo.requiredRole);
+              openDashboardRoute(routeInfo.path, routeInfo.requiredRole);
+            },
+            `Switch to ${routeInfo.requiredRole.toUpperCase()} & Open ↗`
+          );
+        });
+      }
+    });
   }
 
-  applyPersona(activeRole);
+  // 2. Load Stored Role or Default to Admin
+  const stored = await chrome.storage.local.get(["activeRole"]);
+  applyRole(stored.activeRole || "admin");
 
   personaSelect.addEventListener("change", (e) => {
-    applyPersona(e.target.value);
-    showStatus(`Active persona switched to ${PERSONAS[e.target.value].name}.`);
+    applyRole(e.target.value);
+    const p = PERSONAS[e.target.value];
+    showStatus(`Role switched to ${p.name}. Respective dashboards activated and others locked.`, "success");
   });
 
-  // 2. Active Tab Detection
+  // 3. Tab Inspection
   let activeTab;
   try {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -102,7 +200,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Tab query error:", err);
   }
 
-  // 3. Category Pills Toggle
+  // 4. Category Tag Selection
   categoryPills.forEach((pill) => {
     pill.addEventListener("click", () => {
       categoryPills.forEach((p) => p.classList.remove("active"));
@@ -111,26 +209,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  // 4. Direct Dashboard Launchers
-  function openDashboardRoute(path = "/dashboard") {
-    const targetUrl = `${DEFAULT_WEB_URL}${path}`;
-    chrome.tabs.create({ url: targetUrl });
-  }
-
-  btnOpenDashMain.addEventListener("click", () => openDashboardRoute("/dashboard"));
-  btnOpenDashClaims.addEventListener("click", () => openDashboardRoute("/claims"));
-  btnOpenDashHandover.addEventListener("click", () => openDashboardRoute("/handover"));
+  // 5. Footer Web Link
   footerWebLink.addEventListener("click", (e) => {
     e.preventDefault();
-    openDashboardRoute("/dashboard");
+    openDashboardRoute("/dashboard", activeRole);
   });
 
-  // 5. Load / Sync Projects
+  // 6. Project List Loading
   async function loadProjects() {
     try {
       projectSelect.innerHTML = "";
       const persona = PERSONAS[activeRole] || PERSONAS.admin;
-      const resp = await fetch(`${apiBase}/projects`, {
+      const resp = await fetch(`${DEFAULT_API_BASE}/projects`, {
         headers: { Authorization: `Bearer ${persona.token}` }
       });
       if (resp.ok) {
@@ -146,10 +236,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }
     } catch {
-      // Fallback to built-in enterprise projects
+      // Fallback
     }
 
-    // Default enterprise projects
     projectSelect.innerHTML = "";
     DEFAULT_PROJECTS.forEach((p) => {
       const opt = document.createElement("option");
@@ -162,21 +251,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   loadProjects();
   refreshProjectsBtn.addEventListener("click", () => {
     loadProjects();
-    showStatus("Monitored projects synchronized with Knowledge Vault.");
+    showStatus("Monitored projects synchronized with Knowledge Vault.", "success");
   });
 
-  // 6. Execute Capture (Full Page or Highlight)
+  // 7. Execute Capture (Full Page or Selection)
   async function executeCapture(isSelectionOnly = false) {
     if (!activeTab || !activeTab.id) {
-      showStatus("No active browser tab found to capture.", true);
+      showStatus("No active browser tab found to capture.", "error");
       return;
     }
 
     const projectId = projectSelect.value || "1";
     const projectName = projectSelect.options[projectSelect.selectedIndex]?.text || "Monitored Project";
     const notes = notesInput.value.trim();
+    const persona = PERSONAS[activeRole] || PERSONAS.admin;
 
-    showStatus("Analyzing and extracting grounded knowledge from page...");
+    showStatus(`Extracting knowledge as ${persona.name}...`, "success");
 
     try {
       chrome.tabs.sendMessage(activeTab.id, { action: "EXTRACT_PAGE_CONTENT" }, async (response) => {
@@ -192,7 +282,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           pageTitle = d.title || pageTitle;
           metadata = d.metadata || {};
         } else {
-          // Fallback if content script cannot execute on restricted chrome:// or edge:// pages
           extractedContent = `Captured operational runbook from ${pageTitle} (${pageUrl})\n\nContext Notes: ${notes || "Documentation capture for successor handover."}`;
         }
 
@@ -203,15 +292,13 @@ document.addEventListener("DOMContentLoaded", async () => {
           extracted_content: extractedContent,
           selected_text: isSelectionOnly ? extractedContent : null,
           category: selectedCategory,
-          tags: [selectedCategory, "browser_extension"],
+          tags: [selectedCategory, `role_${activeRole}`, "extension"],
           notes: notes,
           capture_metadata: metadata
         };
 
-        const persona = PERSONAS[activeRole] || PERSONAS.admin;
-
         try {
-          const res = await fetch(`${apiBase}/captures`, {
+          const res = await fetch(`${DEFAULT_API_BASE}/captures`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -222,81 +309,39 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           if (res.ok) {
             const data = await res.json();
+            const targetRoute = activeRole === "reviewer" ? "/claims" : activeRole === "successor" ? "/handovers" : "/dashboard";
             showStatus(
-              `✅ Ingested ${data.char_count || extractedContent.length} chars into '${projectName}' with deterministic grounding.`,
-              false,
-              `${DEFAULT_WEB_URL}/claims`,
-              "View Grounded Claims in Dashboard ↗"
+              `✅ Ingested ${data.char_count || extractedContent.length} chars into '${projectName}' as ${persona.role.toUpperCase()}.`,
+              "success",
+              () => openDashboardRoute(targetRoute, activeRole),
+              "View in Active Dashboard ↗"
             );
             notesInput.value = "";
             return;
           }
         } catch {
-          // Offline / Local fallback simulation
+          // Offline fallback
         }
 
-        // Resilient Offline/Local Ingestion Guarantee
-        const offlineId = Date.now();
+        // Resilient Offline Queue
         const storedCaptures = (await chrome.storage.local.get(["offlineCaptures"])).offlineCaptures || [];
-        storedCaptures.push({ id: offlineId, ...payload, timestamp: new Date().toISOString() });
+        storedCaptures.push({ id: Date.now(), ...payload, timestamp: new Date().toISOString() });
         await chrome.storage.local.set({ offlineCaptures: storedCaptures });
 
+        const targetRoute = activeRole === "reviewer" ? "/claims" : activeRole === "successor" ? "/handovers" : "/dashboard";
         showStatus(
-          `✅ Grounded & Saved ${extractedContent.length} chars to '${projectName}' as ${persona.name}.`,
-          false,
-          `${DEFAULT_WEB_URL}/claims`,
-          "View Claims in Web Dashboard ↗"
+          `✅ Grounded ${extractedContent.length} chars to '${projectName}' as ${persona.role.toUpperCase()}.`,
+          "success",
+          () => openDashboardRoute(targetRoute, activeRole),
+          "View in Active Dashboard ↗"
         );
         notesInput.value = "";
       });
     } catch (err) {
-      showStatus("Capture failed: " + err.message, true);
+      showStatus("Capture failed: " + err.message, "error");
     }
   }
 
   btnCaptureAll.addEventListener("click", () => executeCapture(false));
   btnCaptureSelection.addEventListener("click", () => executeCapture(true));
-
-  // 7. Advanced Custom Credentials Accordion
-  toggleCredentials.addEventListener("click", () => {
-    const isHidden = credentialsContent.style.display !== "block";
-    credentialsContent.style.display = isHidden ? "block" : "none";
-    toggleCredentials.textContent = isHidden ? "Hide Custom Server Settings ▲" : "Advanced: Custom Server Login / Settings ▼";
-  });
-
-  btnCustomLogin.addEventListener("click", async () => {
-    const email = document.getElementById("custom-email").value.trim();
-    const password = document.getElementById("custom-password").value;
-    const customApi = apiBaseInput.value.trim() || DEFAULT_API_BASE;
-
-    if (!email || !password) {
-      showStatus("Please supply corporate email and access password.", true);
-      return;
-    }
-
-    try {
-      showStatus("Authenticating against custom vault...");
-      const resp = await fetch(`${customApi}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await resp.json();
-      if (!resp.ok) {
-        showStatus(data.detail || "Authentication refused.", true);
-        return;
-      }
-      await chrome.storage.local.set({
-        customToken: data.access_token,
-        apiBase: customApi,
-        batonToken: data.access_token
-      });
-      personaNameEl.textContent = `${data.user?.full_name || email} (${data.user?.role || "user"})`;
-      apiBase = customApi;
-      showStatus("Authenticated with custom enterprise server! Projects reloaded.");
-      loadProjects();
-    } catch (err) {
-      showStatus("Connection error: " + err.message, true);
-    }
-  });
 });

@@ -86,7 +86,13 @@ export const LoginPage: React.FC = () => {
 
   const handleStaticLogin = (role: 'admin' | 'reviewer' | 'successor' = 'admin') => {
     staticLogin(role);
-    navigate('/dashboard');
+    if (role === 'reviewer') {
+      navigate('/claims');
+    } else if (role === 'successor') {
+      navigate('/successor');
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -119,54 +125,60 @@ export const LoginPage: React.FC = () => {
         <div className="bg-white dark:bg-[#10182E] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl dark:shadow-2xl space-y-5 transition-colors">
           
           {/* ULTRA-PROMINENT DIRECT DASHBOARD BUTTON */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <button
               type="button"
               onClick={() => handleStaticLogin('admin')}
               className="w-full py-3.5 px-4 bg-gradient-to-r from-teal-500 via-cyan-500 to-emerald-500 hover:from-teal-400 hover:to-cyan-400 text-slate-950 font-black text-sm rounded-xl transition-all shadow-lg shadow-teal-500/30 flex items-center justify-center gap-2 group cursor-pointer border-2 border-teal-300 dark:border-cyan-300"
             >
               <LayoutDashboard className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" />
-              <span>DIRECT ACCESS TO DASHBOARD</span>
+              <span>DIRECT ACCESS TO ARCHITECT DASHBOARD</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
             <div className="flex items-center justify-center gap-1.5 text-[11px] text-teal-700 dark:text-cyan-400 font-semibold">
               <Zap className="w-3.5 h-3.5 fill-current" />
-              <span>One-Click Instant Access &bull; No Credentials Required</span>
+              <span>Instant Dashboard Access &bull; No Login Required</span>
             </div>
           </div>
 
-          {/* Quick Role Selectors for Testing */}
-          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 space-y-2">
+          {/* Dedicated Persona Dashboard Jump Buttons */}
+          <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 space-y-2.5">
             <div className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider text-center">
-              Explore As Pre-Seeded Role:
+              Jump Directly to Respective Role Dashboard:
             </div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => handleStaticLogin('admin')}
-                className="py-1.5 px-2 bg-white dark:bg-slate-900 hover:bg-teal-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-1 transition-colors cursor-pointer"
-                title="Lead Architect (Full Admin)"
+                className="p-2.5 bg-white dark:bg-slate-900 hover:bg-teal-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl text-left transition-all cursor-pointer group hover:border-teal-400 dark:hover:border-teal-500"
               >
-                <Zap className="w-3 h-3 text-teal-600 dark:text-cyan-400" />
-                <span>Admin</span>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Zap className="w-3.5 h-3.5 text-teal-600 dark:text-cyan-400" />
+                  <span className="text-xs font-bold text-slate-900 dark:text-slate-100">Architect</span>
+                </div>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">Radar &amp; Ingestion</p>
               </button>
               <button
                 type="button"
                 onClick={() => handleStaticLogin('reviewer')}
-                className="py-1.5 px-2 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-1 transition-colors cursor-pointer"
-                title="Compliance Reviewer"
+                className="p-2.5 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl text-left transition-all cursor-pointer group hover:border-blue-400 dark:hover:border-blue-500"
               >
-                <ShieldCheck className="w-3 h-3 text-blue-600 dark:text-blue-400" />
-                <span>Reviewer</span>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                  <span className="text-xs font-bold text-slate-900 dark:text-slate-100">Reviewer</span>
+                </div>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">Claims &amp; Gaps</p>
               </button>
               <button
                 type="button"
                 onClick={() => handleStaticLogin('successor')}
-                className="py-1.5 px-2 bg-white dark:bg-slate-900 hover:bg-emerald-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-1 transition-colors cursor-pointer"
-                title="Incoming Successor"
+                className="p-2.5 bg-white dark:bg-slate-900 hover:bg-emerald-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl text-left transition-all cursor-pointer group hover:border-emerald-400 dark:hover:border-emerald-500"
               >
-                <UserCheck className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-                <span>Successor</span>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <UserCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span className="text-xs font-bold text-slate-900 dark:text-slate-100">Successor</span>
+                </div>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">Handover &amp; QR</p>
               </button>
             </div>
           </div>

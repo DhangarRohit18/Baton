@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>BATON Knowledge Capture</title>
+  <title>BATON Knowledge Continuity Vault</title>
   <style>
     :root {
       --bg-dark: #070D1E;
@@ -14,19 +14,29 @@
       --text-secondary: #CBD5E1;
       --text-muted: #94A3B8;
       --border-color: #1E293B;
+      --border-active: #06B6D4;
       --danger: #EF4444;
       --success: #10B981;
       --warning: #F59E0B;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body {
-      width: 390px;
+      width: 440px;
+      min-height: 560px;
+      max-height: 590px;
       background: var(--bg-dark);
       color: var(--text-main);
-      padding: 16px;
-      font-size: 13px;
+      padding: 14px;
+      font-size: 12.5px;
       line-height: 1.4;
+      overflow-y: auto;
     }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
 
     /* Header */
     .header {
@@ -34,8 +44,8 @@
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border-color);
-      padding-bottom: 12px;
-      margin-bottom: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
     }
     .logo-group {
       display: flex;
@@ -43,21 +53,21 @@
       gap: 8px;
     }
     .logo-badge {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
       background: linear-gradient(135deg, var(--accent-teal), var(--accent-cyan));
       display: flex;
       align-items: center;
       justify-content: center;
       color: #04101E;
       font-weight: 900;
-      font-size: 14px;
-      box-shadow: 0 0 12px rgba(6, 182, 212, 0.35);
+      font-size: 13px;
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.35);
     }
     .logo-text {
       font-weight: 800;
-      font-size: 15px;
+      font-size: 14px;
       letter-spacing: 0.5px;
       color: var(--text-main);
     }
@@ -68,16 +78,16 @@
       background: rgba(16, 185, 129, 0.12);
       border: 1px solid rgba(16, 185, 129, 0.3);
       color: #34D399;
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 700;
-      padding: 3px 8px;
+      padding: 2px 7px;
       border-radius: 9999px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .pulse-dot {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       background: #10B981;
       animation: pulse 2s infinite;
@@ -88,12 +98,12 @@
       100% { transform: scale(0.95); opacity: 0.8; }
     }
 
-    /* Persona Selector Card */
-    .persona-card {
+    /* Role Persona Bar */
+    .persona-bar {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 10px 12px;
+      border-radius: 9px;
+      padding: 8px 10px;
       margin-bottom: 10px;
       display: flex;
       align-items: center;
@@ -105,14 +115,14 @@
       overflow: hidden;
     }
     .persona-title {
-      font-size: 10px;
+      font-size: 9.5px;
       text-transform: uppercase;
       color: var(--text-muted);
       font-weight: 700;
       letter-spacing: 0.5px;
     }
     .persona-name {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--text-main);
       white-space: nowrap;
@@ -125,177 +135,115 @@
       color: var(--accent-cyan);
       font-size: 11px;
       font-weight: 700;
-      padding: 5px 8px;
+      padding: 4px 6px;
       border-radius: 6px;
       cursor: pointer;
       outline: none;
     }
 
-    /* Role Capability Badge */
-    .role-scope-banner {
-      background: rgba(6, 182, 212, 0.08);
-      border: 1px solid rgba(6, 182, 212, 0.2);
+    /* Dynamic View Tabs Navigation */
+    .tabs-nav {
+      display: flex;
+      gap: 4px;
+      background: var(--card-subtle);
+      padding: 3px;
       border-radius: 8px;
-      padding: 6px 10px;
+      border: 1px solid var(--border-color);
       margin-bottom: 12px;
-      font-size: 10.5px;
-      color: var(--accent-cyan);
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
-    .role-scope-icon {
-      font-size: 12px;
-      shrink: 0;
-    }
-
-    /* Dashboard Action Buttons Bar */
-    .dashboard-bar {
-      margin-bottom: 14px;
-    }
-    .bar-label {
-      font-size: 10px;
-      text-transform: uppercase;
+    .tab-btn {
+      flex: 1;
+      padding: 6px 4px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
       color: var(--text-muted);
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: center;
+      gap: 4px;
+      white-space: nowrap;
     }
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px;
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+    .tab-btn.active {
+      background: var(--card-bg);
+      color: var(--accent-cyan);
+      font-weight: 700;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     }
 
-    /* Dashboard Button Styles: Active vs Deactive */
-    .btn-dash {
+    /* View Containers */
+    .view-content {
+      display: none;
+      animation: fadeIn 0.15s ease;
+    }
+    .view-content.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards & Components */
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 9px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+    .preview-box {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 8px;
       padding: 8px 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-align: left;
-      position: relative;
-    }
-    
-    /* ACTIVE DASHBOARD BUTTON */
-    .btn-dash.active-feature {
-      background: linear-gradient(145deg, rgba(16, 24, 46, 0.95), rgba(11, 19, 43, 0.95));
-      border: 1px solid rgba(6, 182, 212, 0.45);
-      box-shadow: 0 0 10px rgba(6, 182, 212, 0.12);
-      cursor: pointer;
-    }
-    .btn-dash.active-feature:hover {
-      border-color: var(--accent-cyan);
-      transform: translateY(-1px);
-      box-shadow: 0 2px 12px rgba(6, 182, 212, 0.25);
-    }
-    .btn-dash.active-feature .dash-title {
-      color: var(--text-main);
-      font-weight: 700;
-      font-size: 11px;
-    }
-    .btn-dash.active-feature .dash-badge {
-      background: rgba(16, 185, 129, 0.2);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #34D399;
-      font-size: 9px;
-      font-weight: 800;
-      padding: 1px 5px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      align-self: flex-start;
-      margin-top: 2px;
-    }
-
-    /* DEACTIVATED / LOCKED DASHBOARD BUTTON */
-    .btn-dash.deactive-feature {
-      opacity: 0.45;
-      background: rgba(11, 19, 43, 0.6);
-      border: 1px dashed #334155;
-      cursor: not-allowed;
-      filter: grayscale(0.5);
-    }
-    .btn-dash.deactive-feature:hover {
-      opacity: 0.7;
-      border-color: #64748B;
-    }
-    .btn-dash.deactive-feature .dash-title {
-      color: var(--text-muted);
-      font-weight: 600;
-      font-size: 11px;
-    }
-    .btn-dash.deactive-feature .dash-badge {
-      background: rgba(100, 116, 139, 0.2);
-      border: 1px solid rgba(100, 116, 139, 0.4);
-      color: #94A3B8;
-      font-size: 9px;
-      font-weight: 700;
-      padding: 1px 5px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      align-self: flex-start;
-      margin-top: 2px;
-    }
-    .dash-icon-title {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .dash-icon-title svg {
-      width: 14px;
-      height: 14px;
-      shrink: 0;
-    }
-
-    /* Page Preview Card */
-    .preview-box {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 10px 12px;
-      margin-bottom: 12px;
-    }
-    .preview-header {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 4px;
+      margin-bottom: 10px;
     }
     .preview-title {
       font-weight: 700;
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-main);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      flex: 1;
     }
     .preview-url {
       color: var(--text-muted);
-      font-size: 10px;
+      font-size: 9.5px;
       font-family: monospace;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    /* Forms */
+    /* Form Inputs */
     .form-group {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     label {
       display: block;
       color: var(--text-muted);
-      margin-bottom: 4px;
-      font-size: 10px;
+      margin-bottom: 3px;
+      font-size: 9.5px;
       text-transform: uppercase;
       font-weight: 700;
       letter-spacing: 0.5px;
@@ -305,10 +253,9 @@
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       color: var(--text-main);
-      padding: 8px 10px;
-      border-radius: 8px;
-      font-size: 12px;
-      transition: border-color 0.15s ease;
+      padding: 7px 9px;
+      border-radius: 7px;
+      font-size: 11.5px;
     }
     input:focus, select:focus, textarea:focus {
       outline: none;
@@ -320,17 +267,16 @@
       display: flex;
       flex-wrap: wrap;
       gap: 4px;
-      margin-top: 5px;
+      margin-top: 4px;
     }
     .tag-pill {
       background: var(--card-subtle);
       border: 1px solid var(--border-color);
       color: var(--text-muted);
-      padding: 2px 7px;
+      padding: 2px 6px;
       border-radius: 4px;
-      font-size: 10px;
+      font-size: 9.5px;
       cursor: pointer;
-      transition: all 0.15s ease;
     }
     .tag-pill:hover, .tag-pill.active {
       background: rgba(6, 182, 212, 0.15);
@@ -338,58 +284,221 @@
       color: var(--accent-cyan);
     }
 
-    /* Action Buttons */
+    /* Buttons */
     .btn-group {
       display: flex;
-      gap: 8px;
-      margin-top: 12px;
+      gap: 6px;
+      margin-top: 10px;
     }
     .btn {
       flex: 1;
-      padding: 9px 12px;
-      border-radius: 8px;
+      padding: 8px 10px;
+      border-radius: 7px;
       border: none;
       font-weight: 700;
-      font-size: 12px;
+      font-size: 11.5px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
       transition: all 0.15s ease;
     }
     .btn-primary {
       background: linear-gradient(135deg, var(--accent-teal), var(--accent-cyan));
       color: #04101E;
-      box-shadow: 0 2px 10px rgba(6, 182, 212, 0.3);
     }
-    .btn-primary:hover {
-      filter: brightness(1.1);
-      transform: translateY(-1px);
-    }
+    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
     .btn-secondary {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       color: var(--text-secondary);
     }
-    .btn-secondary:hover {
-      background: var(--card-subtle);
-      border-color: var(--text-muted);
-      color: var(--text-main);
+    .btn-secondary:hover { background: var(--card-subtle); color: var(--text-main); }
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 10px;
+      border-radius: 5px;
     }
 
-    /* Status Notifications */
-    .status-msg {
-      margin-top: 10px;
-      padding: 8px 10px;
-      border-radius: 8px;
-      font-size: 11px;
-      display: none;
-      animation: fadeIn 0.2s ease;
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-4px); }
-      to { opacity: 1; transform: translateY(0); }
+    .stat-card {
+      background: var(--card-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 7px;
+      padding: 8px 6px;
+      text-align: center;
+    }
+    .stat-val {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .stat-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    /* Claims & Evidence List */
+    .claim-item {
+      background: var(--card-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 7px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      position: relative;
+    }
+    .claim-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 3px;
+    }
+    .claim-tag {
+      font-size: 9px;
+      font-family: monospace;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: #1E293B;
+      color: var(--text-muted);
+    }
+    .claim-score {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #34D399;
+    }
+    .claim-text {
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+    .claim-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .btn-approve {
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.15);
+      color: #34D399;
+      font-size: 9.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-approve:hover { background: rgba(16, 185, 129, 0.3); }
+    .btn-dispute {
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.15);
+      color: #F87171;
+      font-size: 9.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-dispute:hover { background: rgba(239, 68, 68, 0.3); }
+
+    /* Gap Card */
+    .gap-card {
+      background: var(--card-subtle);
+      border-left: 3px solid var(--danger);
+      border-top: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+    }
+    .gap-title {
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+    }
+    .gap-desc {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      margin: 3px 0 6px 0;
+    }
+
+    /* Handover Accordion */
+    .handover-section {
+      background: var(--card-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 7px;
+      margin-bottom: 6px;
+      overflow: hidden;
+    }
+    .handover-section-header {
+      padding: 7px 10px;
+      background: var(--card-bg);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .handover-section-body {
+      padding: 8px 10px;
+      font-size: 10.5px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      white-space: pre-line;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* QR Bridge Box */
+    .qr-box {
+      background: var(--card-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .qr-matrix {
+      width: 110px;
+      height: 110px;
+      margin: 8px auto;
+      background: #FFFFFF;
+      padding: 6px;
+      border-radius: 6px;
+    }
+    .qr-matrix img {
+      width: 100%;
+      height: 100%;
+    }
+    .qr-token-text {
+      font-family: monospace;
+      font-size: 9px;
+      color: var(--text-muted);
+      word-break: break-all;
+      background: var(--bg-dark);
+      padding: 4px 6px;
+      border-radius: 4px;
+      margin-top: 6px;
+    }
+
+    /* Notifications */
+    .status-msg {
+      margin-top: 8px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      display: none;
     }
     .status-success {
       background: rgba(16, 185, 129, 0.15);
@@ -401,43 +510,21 @@
       border: 1px solid rgba(245, 158, 11, 0.4);
       color: #FCD34D;
     }
-    .status-error {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      color: #FCA5A5;
-    }
-    .status-action-btn {
-      display: inline-block;
-      margin-top: 6px;
-      padding: 4px 8px;
-      background: rgba(6, 182, 212, 0.25);
-      border: 1px solid var(--accent-cyan);
-      color: var(--accent-cyan);
-      border-radius: 4px;
-      font-weight: 700;
-      font-size: 10px;
-      text-decoration: none;
-      cursor: pointer;
-    }
 
     /* Footer */
     .footer {
-      margin-top: 12px;
-      padding-top: 10px;
+      margin-top: 10px;
+      padding-top: 8px;
       border-top: 1px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 10px;
+      font-size: 9.5px;
       color: var(--text-muted);
     }
-    .footer a {
+    .footer-badge {
       color: var(--accent-cyan);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .footer a:hover {
-      text-decoration: underline;
+      font-weight: 700;
     }
   </style>
 </head>
@@ -446,181 +533,216 @@
   <div class="header">
     <div class="logo-group">
       <div class="logo-badge">⚡</div>
-      <div class="logo-text">BATON</div>
+      <div class="logo-text">BATON CONTINUITY VAULT</div>
     </div>
     <div class="status-pill">
       <span class="pulse-dot"></span>
-      <span id="header-status-label">Vault Active</span>
+      <span>In-Extension Mode</span>
     </div>
   </div>
 
-  <!-- Active Persona Card (Zero-Login Barrier) -->
-  <div class="persona-card">
+  <!-- Role Persona Selector -->
+  <div class="persona-bar">
     <div class="persona-meta">
-      <div class="persona-title">Active Role Context</div>
+      <div class="persona-title">Active Persona Role</div>
       <div class="persona-name" id="current-persona-name">Rohit Dhangar (Chief Architect)</div>
     </div>
-    <select id="persona-role-select" class="role-select" title="Switch Role / Persona">
+    <select id="persona-role-select" class="role-select" title="Switch Role">
       <option value="admin">👑 Architect / Admin</option>
       <option value="reviewer">🛡️ Compliance Reviewer</option>
       <option value="successor">🚀 Successor Lead</option>
     </select>
   </div>
 
-  <!-- Role Capabilities Scope Banner -->
-  <div class="role-scope-banner" id="role-scope-banner">
-    <span class="role-scope-icon">⚡</span>
-    <span id="role-scope-text">Active Scope: Full Architecture, Radar &amp; Governance</span>
+  <!-- Dynamic Role Tabs Navigation (Direct Inside Extension) -->
+  <div class="tabs-nav" id="role-tabs-nav">
+    <!-- Populated dynamically based on role -->
   </div>
 
-  <!-- Role-Filtered Dashboard Action Buttons -->
-  <div class="dashboard-bar">
-    <div class="bar-label">
-      <span>Role Dashboards &bull; Dynamic Access</span>
-      <span style="color: var(--accent-cyan); cursor: pointer;" id="refresh-projects-btn">↻ Sync</span>
-    </div>
-    
-    <div class="dashboard-grid">
-      <!-- 1. Admin Radar Dashboard -->
-      <button class="btn-dash" id="dash-radar" data-dash="radar" data-allowed-roles="admin" title="Open Continuity Risk Radar">
-        <div class="dash-icon-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-          </svg>
-          <span class="dash-title">Architecture Radar</span>
-        </div>
-        <span class="dash-badge" id="badge-radar">Active</span>
-      </button>
-
-      <!-- 2. Admin Document Ingestion & Sources -->
-      <button class="btn-dash" id="dash-ingestion" data-dash="ingestion" data-allowed-roles="admin" title="Open Document Ingestion Hub">
-        <div class="dash-icon-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-          </svg>
-          <span class="dash-title">Source Ingestion</span>
-        </div>
-        <span class="dash-badge" id="badge-ingestion">Active</span>
-      </button>
-
-      <!-- 3. Reviewer Claim Ledger -->
-      <button class="btn-dash" id="dash-claims" data-dash="claims" data-allowed-roles="reviewer" title="Open Claim Ledger &amp; Evidence Grounding">
-        <div class="dash-icon-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          <span class="dash-title">Claim Ledger</span>
-        </div>
-        <span class="dash-badge" id="badge-claims">Active</span>
-      </button>
-
-      <!-- 4. Reviewer Gaps & Contradictions -->
-      <button class="btn-dash" id="dash-gaps" data-dash="gaps" data-allowed-roles="reviewer" title="Open Knowledge Gaps &amp; Conflicts">
-        <div class="dash-icon-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-          <span class="dash-title">Gaps &amp; Conflicts</span>
-        </div>
-        <span class="dash-badge" id="badge-gaps">Active</span>
-      </button>
-
-      <!-- 5. Successor Handover Packs -->
-      <button class="btn-dash" id="dash-handover" data-dash="handover" data-allowed-roles="successor" title="Open Handover Packs &amp; Runbooks">
-        <div class="dash-icon-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-          </svg>
-          <span class="dash-title">Handover Packs</span>
-        </div>
-        <span class="dash-badge" id="badge-handover">Active</span>
-      </button>
-
-      <!-- 6. Successor Onboarding & QR Bridge -->
-      <button class="btn-dash" id="dash-successor" data-dash="successor" data-allowed-roles="successor" title="Open Successor 30-Day Onboarding &amp; QR Bridge">
-        <div class="dash-icon-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-          </svg>
-          <span class="dash-title">Successor Portal</span>
-        </div>
-        <span class="dash-badge" id="badge-successor">Active</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Active Page Preview Box -->
-  <div class="preview-box">
-    <div class="preview-header">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-cyan); shrink: 0;">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="2" y1="12" x2="22" y2="12"></line>
-        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-      </svg>
+  <!-- ================= VIEW 1: CAPTURE ENGINE ================= -->
+  <div class="view-content active" id="view-capture">
+    <div class="preview-box">
       <div class="preview-title" id="page-title">Detecting active page...</div>
+      <div class="preview-url" id="page-url">Inspecting browser tab...</div>
     </div>
-    <div class="preview-url" id="page-url">Inspecting browser tab...</div>
-  </div>
 
-  <!-- Capture Controls (Role-Tailored) -->
-  <div class="form-group">
-    <label>Target Monitored Project</label>
-    <select id="project-select">
-      <option value="1">Core Payment &amp; Settlement Engine</option>
-      <option value="2">Quantum RF Telemetry Platform</option>
-      <option value="3">Zero-Trust Identity Broker</option>
-    </select>
-  </div>
+    <div class="form-group">
+      <label>Target Project Domain</label>
+      <select id="project-select">
+        <option value="1">Core Payment &amp; Settlement Engine</option>
+        <option value="2">Quantum RF Telemetry Platform</option>
+        <option value="3">Zero-Trust Identity Broker</option>
+      </select>
+    </div>
 
-  <div class="form-group">
-    <label id="category-label">Knowledge Category</label>
-    <div class="tag-pills" id="category-pills">
-      <span class="tag-pill active" data-tag="architecture">Architecture</span>
-      <span class="tag-pill" data-tag="operational">Operational</span>
-      <span class="tag-pill" data-tag="runbook">Runbook</span>
-      <span class="tag-pill" data-tag="credentials">Credentials</span>
-      <span class="tag-pill" data-tag="backlog">Backlog</span>
+    <div class="form-group">
+      <label>Knowledge Category</label>
+      <div class="tag-pills" id="category-pills">
+        <span class="tag-pill active" data-tag="architecture">Architecture</span>
+        <span class="tag-pill" data-tag="operational">Operational</span>
+        <span class="tag-pill" data-tag="runbook">Runbook</span>
+        <span class="tag-pill" data-tag="credentials">Credentials</span>
+        <span class="tag-pill" data-tag="backlog">Backlog</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Context Rationale for Successors</label>
+      <textarea id="capture-notes" rows="2" placeholder="Record architectural constraints, runbook steps, or credentials context..."></textarea>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary" id="btn-capture-all">
+        <span>Capture Entire Page</span>
+      </button>
+      <button class="btn btn-secondary" id="btn-capture-selection">
+        <span>Capture Selection</span>
+      </button>
     </div>
   </div>
 
-  <div class="form-group">
-    <label id="notes-label">Context Rationale for Successors</label>
-    <textarea id="capture-notes" rows="2" placeholder="Explain technical tradeoffs, operational traps, or credentials location..."></textarea>
+  <!-- ================= VIEW 2: ARCHITECTURE RADAR (ADMIN EXCLUSIVE) ================= -->
+  <div class="view-content" id="view-radar">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val" style="color: #34D399;">74.2%</div>
+        <div class="stat-label">Readiness</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color: #F87171;">0.68</div>
+        <div class="stat-label">Bus Factor Risk</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color: #38BDF8;">3 Active</div>
+        <div class="stat-label">Projects</div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="card-header">
+        <span>Monitored Project Health</span>
+        <span style="color: var(--accent-cyan); font-size: 9px;">3 Domains</span>
+      </div>
+      <div id="radar-projects-list" style="space-y-1.5;">
+        <!-- Injected via popup.js -->
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="card-header">
+        <span>System Bus Factor Criticalities</span>
+        <span style="color: var(--danger); font-size: 9px;">2 Alerts</span>
+      </div>
+      <div style="font-size: 10.5px; color: var(--text-muted); space-y-1;">
+        <div style="padding: 4px 0; border-bottom: 1px solid var(--border-color);">
+          &bull; <strong style="color: var(--text-secondary);">Core Payment Engine:</strong> Schema migration procedures isolated with single lead architect.
+        </div>
+        <div style="padding: 4px 0;">
+          &bull; <strong style="color: var(--text-secondary);">Quantum Telemetry:</strong> HSM master passphrase rotation known only to departing lead.
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="btn-group">
-    <button class="btn btn-primary" id="btn-capture-all" title="Extract and ground page text">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-        <polyline points="7 10 12 15 17 10"></polyline>
-        <line x1="12" y1="15" x2="12" y2="3"></line>
-      </svg>
-      <span id="btn-capture-all-text">Capture Page</span>
-    </button>
-    <button class="btn btn-secondary" id="btn-capture-selection" title="Extract highlighted text selection">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <polyline points="4 7 4 4 20 4 20 7"></polyline>
-        <line x1="9" y1="20" x2="15" y2="20"></line>
-        <line x1="12" y1="4" x2="12" y2="20"></line>
-      </svg>
-      <span id="btn-capture-sel-text">Capture Highlight</span>
-    </button>
+  <!-- ================= VIEW 3: SOURCE INGESTION (ADMIN EXCLUSIVE) ================= -->
+  <div class="view-content" id="view-ingestion">
+    <div class="section-card">
+      <div class="card-header">
+        <span>Ingested Knowledge Sources</span>
+        <span style="color: #34D399; font-size: 9px;">SHA-256 Grounded</span>
+      </div>
+      <div id="sources-list">
+        <!-- Injected via popup.js -->
+      </div>
+    </div>
   </div>
 
-  <!-- Status Notification Box with Instant Jump Link -->
+  <!-- ================= VIEW 4: CLAIM LEDGER (REVIEWER EXCLUSIVE) ================= -->
+  <div class="view-content" id="view-claims">
+    <div class="section-card" style="padding: 6px 10px; margin-bottom: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">
+          Grounded Claims Queue (<span id="claim-count-badge">5</span>)
+        </span>
+        <span style="font-size: 9.5px; color: #34D399; font-weight: 700;">Deterministic Guard</span>
+      </div>
+    </div>
+    <div id="claims-list-container">
+      <!-- Injected via popup.js -->
+    </div>
+  </div>
+
+  <!-- ================= VIEW 5: GAPS & CONFLICTS (REVIEWER EXCLUSIVE) ================= -->
+  <div class="view-content" id="view-gaps">
+    <div class="section-card" style="padding: 6px 10px; margin-bottom: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">
+          Unresolved Knowledge Voids
+        </span>
+        <span style="font-size: 9.5px; color: var(--danger); font-weight: 700;">3 Action Items</span>
+      </div>
+    </div>
+    <div id="gaps-list-container">
+      <!-- Injected via popup.js -->
+    </div>
+  </div>
+
+  <!-- ================= VIEW 6: HANDOVER PACK (SUCCESSOR EXCLUSIVE) ================= -->
+  <div class="view-content" id="view-handover">
+    <div class="section-card" style="padding: 6px 10px; margin-bottom: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--accent-cyan);">
+          Successor Handover Dossier &bull; v2.4
+        </span>
+        <button class="btn-sm btn-secondary" id="btn-copy-handover">Copy Markdown</button>
+      </div>
+    </div>
+    <div id="handover-accordion-container">
+      <!-- Injected via popup.js -->
+    </div>
+  </div>
+
+  <!-- ================= VIEW 7: SUCCESSOR PORTAL & QR (SUCCESSOR EXCLUSIVE) ================= -->
+  <div class="view-content" id="view-successor">
+    <div class="qr-box">
+      <div style="font-weight: 700; font-size: 11.5px; color: var(--text-main);">QR Knowledge Bridge Token</div>
+      <div style="font-size: 10px; color: #34D399; margin-top: 2px;">● Signed HMAC-SHA256 &bull; 48h Remaining</div>
+      <div class="qr-matrix">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://baton-continuity.vercel.app/verify/BATON-SEC-DEMO-2026" alt="QR Bridge Token">
+      </div>
+      <div style="font-size: 10px; color: var(--text-muted);">Scan via phone or pass to incoming team lead</div>
+      <div class="qr-token-text">BATON-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.9f2a7b8e</div>
+    </div>
+
+    <div class="section-card">
+      <div class="card-header">
+        <span>30-Day Successor Roadmap</span>
+        <span style="color: #34D399; font-size: 9px;">3 Milestones</span>
+      </div>
+      <div style="font-size: 10.5px; color: var(--text-secondary); space-y-2;">
+        <div style="display: flex; gap: 6px; align-items: flex-start;">
+          <input type="checkbox" checked style="width: auto; margin-top: 2px;">
+          <span><strong>Days 1–7:</strong> Vault credentials verification and shadow on-call rotation.</span>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: flex-start; margin-top: 4px;">
+          <input type="checkbox" checked style="width: auto; margin-top: 2px;">
+          <span><strong>Days 8–15:</strong> Resolve HSM rotation gap and conduct staging failover test.</span>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: flex-start; margin-top: 4px;">
+          <input type="checkbox" style="width: auto; margin-top: 2px;">
+          <span><strong>Days 16–30:</strong> Assume primary architectural ownership; archive departing credentials.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Box -->
   <div class="status-msg" id="status-box"></div>
 
   <!-- Footer -->
   <div class="footer">
     <span id="footer-role-label">Role: Architect / Full Admin</span>
-    <a href="#" id="footer-web-link">Launch Web Platform ↗</a>
+    <span class="footer-badge" id="footer-active-view-badge">View: Ingestion</span>
   </div>
 
   <script src="popup.js"></script>

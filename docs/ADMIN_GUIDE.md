@@ -52,3 +52,4 @@ When an engineer departs, the QR Knowledge Bridge facilitates secure, frictionle
 2. **Access Capping**: Default max redemptions = 5 (single-use or multi-use allowed).
 3. **Passphrase Protection**: Recommended for high-security domains.
 4. **Emergency Revocation**: If a token is compromised or leaked, an Administrator can immediately revoke it from the Handover or QR Bridge screen. All subsequent scans fail instantly.
+

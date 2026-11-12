@@ -118,3 +118,4 @@ Synchronizes README files and recent commit changelogs directly from GitHub REST
 - `POST /api/v1/qr-bridge/mint`: Mints a signed, time-decayed QR access token with configurable TTL hours, max uses, and secondary passphrase.
 - `POST /api/v1/qr-bridge/verify`: Public verification and claim challenge endpoint for successors.
 - `POST /api/v1/qr-bridge/revoke`: Immediate one-click revocation of an active QR bridge with immutable audit reason.
+

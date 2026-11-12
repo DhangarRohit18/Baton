@@ -73,3 +73,4 @@ When an engineer or architect prepares to transition:
    - **Export .md**: Download portable Markdown for offline vaults or wikis.
    - **QR Code**: Present the QR code to the incoming successor.
 5. Successor can scan the QR code with their mobile phone or enter the token at `/verify` to immediately receive the complete handover brief.
+

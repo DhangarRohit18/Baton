@@ -73,3 +73,4 @@ The extension operates under zero-trust principles:
 - No background analytics or third-party trackers.
 - Captures are only triggered by explicit user action.
 - All requests are cryptographically authenticated via Bearer JWT.
+

@@ -127,3 +127,4 @@ Run the recovery verification script to test schema consistency:
 pytest backend/tests/
 ```
 Verify all tables, relationships, and grounding guard constraints match production expectations.
+

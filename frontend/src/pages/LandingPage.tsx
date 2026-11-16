@@ -118,6 +118,15 @@ export const LandingPage: React.FC = () => {
           </Link>
         </div>
 
+        {/* Demo Account Credentials Callout for Evaluators */}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+          <span className="font-bold text-teal-700 dark:text-cyan-400">Judge Demo Credentials:</span>
+          <span className="font-mono bg-white dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200">architect@baton-continuity.io</span>
+          <span className="text-slate-400">/</span>
+          <span className="font-mono bg-white dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200">Password123!</span>
+          <span className="text-[11px] text-teal-600 dark:text-cyan-400 font-semibold">(Or click Live Demo button above)</span>
+        </div>
+
         {/* Philosophy Callout */}
         <div className="mt-16 p-6 rounded-2xl bg-slate-50 dark:bg-gradient-to-b dark:from-slate-900/90 dark:to-slate-950/90 border border-slate-200 dark:border-slate-800 text-left max-w-3xl w-full shadow-md">
           <p className="text-sm italic text-slate-700 dark:text-slate-300 font-serif leading-relaxed">

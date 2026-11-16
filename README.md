@@ -174,6 +174,6 @@ Open [http://localhost:5173](http://localhost:5173) to access BATON locally.
 ## 📜 Team & Hackathon Declaration
 
 * **Hackathon:** CodersInPune 2026 (Round 3 — The Final Product)
-* **Team Name:** BATON
-* **Team Leader:** Rohit Dhangar ([dhangarrohit2006@gmail.com](mailto:dhangarrohit2006@gmail.com))
+* **Team Name:** TerminalX
+* **Team Leader:** Vedant Kolsure ([vedantk2612@gmail.com](mailto:vedantk2612@@gmail.com))
 * **License:** MIT License

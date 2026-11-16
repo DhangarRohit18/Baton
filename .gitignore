@@ -2,16 +2,22 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
+*.pyo
 backend/venv/
 *.db
+*.sqlite3
+baton.db
 .env
 
 # Node & Frontend
 node_modules/
 dist/
 .tmp/
+.vercel/
 
-# OS
+# OS & IDE
 .DS_Store
 Thumbs.db
-
+.idea/
+.vscode/

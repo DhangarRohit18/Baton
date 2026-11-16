@@ -71,11 +71,10 @@ export const ClaimsLedgerPage: React.FC = () => {
   const filteredClaims = claims.filter((c) => {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
-    return (
-      c.title.toLowerCase().includes(q) ||
-      c.statement.toLowerCase().includes(q) ||
-      c.category.toLowerCase().includes(q)
-    );
+    const title = (c.title || '').toLowerCase();
+    const statement = (c.statement || '').toLowerCase();
+    const category = (c.category || '').toLowerCase();
+    return title.includes(q) || statement.includes(q) || category.includes(q);
   });
 
   return (

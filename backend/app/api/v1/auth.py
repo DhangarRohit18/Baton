@@ -54,7 +54,7 @@ def register_tenant_and_user(data: UserRegister, db: Session = Depends(get_db)):
         action="TENANT_REGISTERED",
         resource_type="organization",
         resource_id=str(org.id),
-        details_json=f'{{"org_name": "{org.name}"}}'
+        details_json=json.dumps({"org_name": org.name})
     )
     db.add(audit)
     db.commit()

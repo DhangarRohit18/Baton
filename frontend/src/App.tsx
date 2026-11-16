@@ -47,6 +47,8 @@ export const App: React.FC = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/verify-bridge" element={<PublicVerifyPage />} />
+            <Route path="/verify/:token" element={<PublicVerifyPage />} />
+            <Route path="/verify" element={<PublicVerifyPage />} />
 
             {/* Protected authenticated routes */}
             <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />

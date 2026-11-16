@@ -8,7 +8,7 @@ from app.models import QRKnowledgeBridge, QRAccessLog, Handover, Project, Claim,
 from app.core.security import sign_qr_token, verify_qr_token, get_password_hash, verify_password
 
 def utcnow():
-    return datetime.utcnow()
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 def to_naive_utc(dt: datetime) -> datetime:
     if dt.tzinfo is not None:

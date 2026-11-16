@@ -51,7 +51,13 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     list.push(captureItem);
     await chrome.storage.local.set({ offlineCaptures: list });
 
-    // Open claims dashboard to review the new capture
-    chrome.tabs.create({ url: `${DEFAULT_WEB_URL}/claims` });
+    // Update extension badge to confirm capture without redirecting to website
+    if (chrome.action && chrome.action.setBadgeText) {
+      chrome.action.setBadgeText({ text: "✓" });
+      chrome.action.setBadgeBackgroundColor({ color: "#0D9488" });
+      setTimeout(() => {
+        chrome.action.setBadgeText({ text: "" });
+      }, 3000);
+    }
   }
 });

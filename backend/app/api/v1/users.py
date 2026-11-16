@@ -1,3 +1,4 @@
+import json
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, EmailStr, Field
@@ -62,7 +63,7 @@ def invite_team_member(
         action="TEAM_MEMBER_INVITED",
         resource_type="user",
         resource_id=str(new_user.id),
-        details_json=f'{{"email": "{new_user.email}", "role": "{new_user.role}"}}'
+        details_json=json.dumps({"email": new_user.email, "role": new_user.role})
     )
     db.add(audit)
     db.commit()
@@ -85,7 +86,19 @@ def update_user_role(
     if not target:
         raise HTTPException(status_code=404, detail="User not found in organization.")
 
+    old_role = target.role
     target.role = data.role
+
+    audit = AuditLog(
+        organization_id=current_user.organization_id,
+        user_id=current_user.id,
+        user_email=current_user.email,
+        action="USER_ROLE_UPDATED",
+        resource_type="user",
+        resource_id=str(target.id),
+        details_json=json.dumps({"user_email": target.email, "old_role": old_role, "new_role": data.role})
+    )
+    db.add(audit)
     db.commit()
     db.refresh(target)
     return target

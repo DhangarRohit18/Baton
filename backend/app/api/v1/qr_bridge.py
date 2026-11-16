@@ -90,8 +90,8 @@ def public_verify_qr_bridge(
         "verification_id": f"BATON-VERIFY-{bridge.id:06d}",
         "integrity_status": "REVOKED" if bridge.is_revoked else "VERIFIED_AUTHENTIC",
         "document_type": "Knowledge Continuity Handover Pack",
-        "published_at": bridge.created_at.isoformat(),
-        "expires_at": bridge.expires_at.isoformat(),
+        "published_at": bridge.created_at.isoformat() if bridge.created_at else None,
+        "expires_at": bridge.expires_at.isoformat() if bridge.expires_at else None,
         "claims_count_verified": handover.verified_claims_count if handover else 0,
         "note": "Cryptographic proof confirms this artifact was officially compiled and signed by the institutional steward."
     }

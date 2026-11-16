@@ -1,8 +1,10 @@
 import os
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
+
     PROJECT_NAME: str = "BATON AI Knowledge Continuity Platform"
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = os.getenv("SECRET_KEY", "baton-enterprise-crypto-secret-key-32bytes-secure!")
@@ -23,10 +25,6 @@ class Settings(BaseSettings):
     # Security & QR Bridge
     QR_BRIDGE_DEFAULT_TTL_HOURS: int = 72
     QR_BRIDGE_SIGNING_SALT: str = os.getenv("QR_BRIDGE_SIGNING_SALT", "baton-qr-salt-981273918237")
-
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
 
 settings = Settings()
 

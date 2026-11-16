@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 # ----------------- Auth & User Schemas -----------------
 class UserRegister(BaseModel):
@@ -46,8 +46,7 @@ class UserOut(BaseModel):
     is_active: bool
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class OrganizationOut(BaseModel):
     id: int
@@ -56,8 +55,7 @@ class OrganizationOut(BaseModel):
     plan: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # ----------------- Project Schemas -----------------
 class ProjectCreate(BaseModel):
@@ -87,8 +85,7 @@ class ProjectOut(BaseModel):
     claim_count: Optional[int] = 0
     gap_count: Optional[int] = 0
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # ----------------- Document Schemas -----------------
 class DocumentCreate(BaseModel):
@@ -114,8 +111,7 @@ class DocumentOut(BaseModel):
     char_count: int
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class EvidenceChunkOut(BaseModel):
     id: int
@@ -126,8 +122,7 @@ class EvidenceChunkOut(BaseModel):
     end_offset: int
     page_or_section: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # ----------------- Claim Schemas -----------------
 class ClaimEvidenceLinkOut(BaseModel):
@@ -138,8 +133,7 @@ class ClaimEvidenceLinkOut(BaseModel):
     snippet: str
     document_title: Optional[str] = ""
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class ClaimOut(BaseModel):
     id: int
@@ -156,8 +150,7 @@ class ClaimOut(BaseModel):
     created_at: datetime
     evidence_links: List[ClaimEvidenceLinkOut] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class ClaimReviewRequest(BaseModel):
     decision: str = Field(..., pattern="^(approved|rejected|disputed)$")
@@ -190,8 +183,7 @@ class GapOut(BaseModel):
     resolved_notes: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # ----------------- Contradiction & Dependency -----------------
 class ContradictionOut(BaseModel):
@@ -205,8 +197,7 @@ class ContradictionOut(BaseModel):
     status: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class DependencyCreate(BaseModel):
     project_id: int
@@ -226,8 +217,7 @@ class DependencyOut(BaseModel):
     description: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # ----------------- Exit Interview Schemas -----------------
 class InterviewCreate(BaseModel):
@@ -249,8 +239,7 @@ class InterviewResponseOut(BaseModel):
     answer_text: str
     is_critical: bool
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class InterviewOut(BaseModel):
     id: int
@@ -263,8 +252,7 @@ class InterviewOut(BaseModel):
     created_at: datetime
     questions_count: Optional[int] = 0
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class InterviewDetailOut(InterviewOut):
     responses: List[InterviewResponseOut] = []
@@ -290,8 +278,7 @@ class HandoverOut(BaseModel):
     status: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # ----------------- QR Knowledge Bridge Schemas -----------------
 class QRBridgeMintRequest(BaseModel):
@@ -355,6 +342,5 @@ class AuditLogOut(BaseModel):
     details_json: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 

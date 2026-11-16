@@ -13,6 +13,7 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({ claim, onClose, 
 
   const isGrounded = claim.grounding_status === 'grounded';
   const scorePercent = Math.round(claim.grounding_score * 100);
+  const evidenceLinks = claim.evidence_links || [];
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-slate-950/60 backdrop-blur-xs animate-in fade-in">
@@ -80,7 +81,7 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({ claim, onClose, 
             <div className="flex items-center justify-between">
               <h5 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                 <FileText className="w-4 h-4 text-teal-600 dark:text-cyan-400" />
-                Anchored Source Citations ({claim.evidence_links.length})
+                Anchored Source Citations ({evidenceLinks.length})
               </h5>
               {onReVerify && (
                 <button
@@ -92,12 +93,12 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({ claim, onClose, 
               )}
             </div>
 
-            {claim.evidence_links.length === 0 ? (
+            {evidenceLinks.length === 0 ? (
               <div className="p-4 bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/60 rounded-lg text-center text-xs text-slate-500">
                 No direct evidence chunks linked. Claim is marked unverified.
               </div>
             ) : (
-              claim.evidence_links.map((link) => (
+              evidenceLinks.map((link) => (
                 <div key={link.id} className="bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-lg p-3.5 space-y-2">
                   <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
                     <span className="font-semibold text-slate-800 dark:text-slate-300 flex items-center gap-1">

@@ -177,7 +177,7 @@ class DocumentParserService:
         return summary, chunks
 
     @classmethod
-    async def fetch_github_repo(cls, repo_url: str, token: str = None, branch: str = "main") -> Tuple[str, str, Dict[str, Any]]:
+    async def fetch_github_repo(cls, repo_url: str, token: Optional[str] = None, branch: str = "main") -> Tuple[str, str, Dict[str, Any]]:
         """
         Fetches repository metadata, README, and commit history from GitHub API.
         Works with public repositories or authenticated repos with PAT.
@@ -193,8 +193,9 @@ class DocumentParserService:
             headers["Authorization"] = f"Bearer {token}"
 
         async with httpx.AsyncClient(timeout=20.0) as client:
-            # 1. Fetch README
-            readme_url = f"https://api.github.com/repos/{owner}/{repo}/readme"
+            # 1. Fetch README for specific branch
+            target_branch = branch or "main"
+            readme_url = f"https://api.github.com/repos/{owner}/{repo}/readme?ref={target_branch}"
             readme_resp = await client.get(readme_url, headers=headers)
             readme_text = ""
             if readme_resp.status_code == 200:
@@ -203,8 +204,8 @@ class DocumentParserService:
                 if "content" in data:
                     readme_text = base64.b64decode(data["content"]).decode("utf-8", errors="replace")
 
-            # 2. Fetch recent commits (extract operational change log and authors)
-            commits_url = f"https://api.github.com/repos/{owner}/{repo}/commits?per_page=10"
+            # 2. Fetch recent commits for specific branch
+            commits_url = f"https://api.github.com/repos/{owner}/{repo}/commits?sha={target_branch}&per_page=10"
             commits_resp = await client.get(commits_url, headers=headers)
             commit_logs = []
             if commits_resp.status_code == 200:

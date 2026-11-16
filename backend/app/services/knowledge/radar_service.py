@@ -1,5 +1,6 @@
 import re
 from typing import List, Dict, Any
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from app.models import Project, Claim, KnowledgeGap, Contradiction, Dependency, Handover
 
@@ -155,8 +156,10 @@ class KnowledgeLossRadarService:
                     # Check if already recorded
                     exists = db.query(Contradiction).filter(
                         Contradiction.project_id == project_id,
-                        Contradiction.claim_a_id == c1.id,
-                        Contradiction.claim_b_id == c2.id
+                        or_(
+                            (Contradiction.claim_a_id == c1.id) & (Contradiction.claim_b_id == c2.id),
+                            (Contradiction.claim_a_id == c2.id) & (Contradiction.claim_b_id == c1.id)
+                        )
                     ).first()
                     if not exists:
                         contra = Contradiction(

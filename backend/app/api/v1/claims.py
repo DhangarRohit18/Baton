@@ -171,6 +171,21 @@ def review_claim(
         KnowledgeLossRadarService.calculate_project_risk(db, project)
 
     db.refresh(claim)
+
+    links = db.query(ClaimEvidenceLink).filter(ClaimEvidenceLink.claim_id == claim.id).all()
+    link_outs = []
+    for l in links:
+        ev = db.query(EvidenceChunk).filter(EvidenceChunk.id == l.evidence_id).first()
+        doc_title = ev.document.title if ev and ev.document else "Document"
+        link_outs.append(ClaimEvidenceLinkOut(
+            id=l.id,
+            evidence_id=l.evidence_id,
+            overlap_ratio=l.overlap_ratio,
+            match_method=l.match_method,
+            snippet=l.snippet or (ev.text_content[:200] if ev else ""),
+            document_title=doc_title
+        ))
+
     return {
         "id": claim.id,
         "project_id": claim.project_id,
@@ -184,6 +199,6 @@ def review_claim(
         "status": claim.status,
         "reviewer_notes": claim.reviewer_notes,
         "created_at": claim.created_at,
-        "evidence_links": []
+        "evidence_links": link_outs
     }
 

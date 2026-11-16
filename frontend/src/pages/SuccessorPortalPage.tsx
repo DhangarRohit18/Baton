@@ -5,12 +5,21 @@ import {
   FileText, ExternalLink, Calendar, CheckSquare, Square
 } from 'lucide-react';
 import { QRScannerModal } from '../components/QRScannerModal';
+import { MOCK_HANDOVERS, MOCK_CLAIMS } from '../services/mockData';
 
 export const SuccessorPortalPage: React.FC = () => {
   const location = useLocation();
   const redeemed = (location.state as any)?.redeemedPackage;
   const [isScannerOpen, setIsScannerOpen] = useState(false);
-  const [activePackage, setActivePackage] = useState<any>(redeemed || null);
+  const [activePackage, setActivePackage] = useState<any>(
+    redeemed || {
+      handover: MOCK_HANDOVERS[0],
+      project_name: 'Core Ledger & Payment Engine',
+      remaining_uses: 9,
+      verified_claims: MOCK_CLAIMS,
+      dependencies: [],
+    }
+  );
 
   // 30-day checklist state
   const [checkedTasks, setCheckedTasks] = useState<Record<string, boolean>>(() => {

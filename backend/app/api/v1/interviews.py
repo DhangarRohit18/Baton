@@ -1,3 +1,4 @@
+import json
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -108,7 +109,7 @@ def generate_gap_driven_interview(
         action="EXIT_INTERVIEW_GENERATED",
         resource_type="interview",
         resource_id=str(interview.id),
-        details_json=f'{{"departing_member": "{data.departing_user_name}", "questions": {len(responses)}}}'
+        details_json=json.dumps({"departing_member": data.departing_user_name, "questions": len(responses)})
     )
     db.add(audit)
     db.commit()
@@ -195,7 +196,7 @@ def submit_interview_answer(
     all_resps = db.query(InterviewResponse).filter(InterviewResponse.interview_id == resp.interview_id).all()
     answered = sum(1 for r in all_resps if (r.answer_text and r.answer_text.strip()))
     interview = db.query(ExitInterview).filter(ExitInterview.id == resp.interview_id).first()
-    interview.completion_percentage = round((answered / float(len(all_resps))) * 100.0, 1)
+    interview.completion_percentage = round((answered / float(len(all_resps))) * 100.0, 1) if all_resps else 100.0
     if interview.completion_percentage >= 100.0:
         interview.status = "completed"
 

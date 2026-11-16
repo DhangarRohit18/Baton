@@ -1,3 +1,4 @@
+import json
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -50,7 +51,7 @@ def create_project(data: ProjectCreate, current_user: User = Depends(get_current
         action="PROJECT_CREATED",
         resource_type="project",
         resource_id=str(project.id),
-        details_json=f'{{"name": "{project.name}"}}'
+        details_json=json.dumps({"name": project.name})
     )
     db.add(audit)
     db.commit()
@@ -79,6 +80,49 @@ def get_project(project_id: int, current_user: User = Depends(get_current_user),
     ).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
+
+    return {
+        "id": project.id,
+        "organization_id": project.organization_id,
+        "name": project.name,
+        "description": project.description,
+        "lead_name": project.lead_name,
+        "lead_email": project.lead_email,
+        "status": project.status,
+        "bus_factor_risk": project.bus_factor_risk,
+        "created_at": project.created_at,
+        "document_count": db.query(Document).filter(Document.project_id == project.id).count(),
+        "claim_count": db.query(Claim).filter(Claim.project_id == project.id).count(),
+        "gap_count": db.query(KnowledgeGap).filter(KnowledgeGap.project_id == project.id).count(),
+    }
+
+@router.patch("/{project_id}", response_model=ProjectOut)
+def update_project(
+    project_id: int,
+    data: ProjectUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    project = db.query(Project).filter(
+        Project.id == project_id,
+        Project.organization_id == current_user.organization_id
+    ).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    if data.name is not None:
+        project.name = data.name
+    if data.description is not None:
+        project.description = data.description
+    if data.lead_name is not None:
+        project.lead_name = data.lead_name
+    if data.lead_email is not None:
+        project.lead_email = data.lead_email
+    if data.status is not None:
+        project.status = data.status
+
+    db.commit()
+    db.refresh(project)
 
     return {
         "id": project.id,

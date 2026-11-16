@@ -1,3 +1,4 @@
+import json
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -85,7 +86,7 @@ def resolve_knowledge_gap(
         action="GAP_RESOLVED",
         resource_type="gap",
         resource_id=str(gap.id),
-        details_json=f'{{"title": "{gap.title}"}}'
+        details_json=json.dumps({"title": gap.title})
     )
     db.add(audit)
     db.commit()

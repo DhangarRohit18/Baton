@@ -107,7 +107,7 @@ def generate_handover(
         pitfalls_and_risks=pitfalls_and_risks,
         operational_runbook=operational_runbook,
         verified_claims_count=len(claims),
-        readiness_score=project.bus_factor_risk or 90.0,
+        readiness_score=max(0.0, round(100.0 - (project.bus_factor_risk or 10.0), 1)),
         status="ready"
     )
     db.add(handover)

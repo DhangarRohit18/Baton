@@ -94,3 +94,4 @@ chrome_path = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
 cmd = [chrome_path, '--headless', '--disable-gpu', f'--print-to-pdf={pdf_path}', os.path.abspath(html_path)]
 subprocess.run(cmd, check=True)
 print('PDF generated successfully at:', pdf_path)
+
